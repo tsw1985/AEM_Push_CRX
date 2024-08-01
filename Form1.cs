@@ -95,9 +95,9 @@ namespace AEM_Push_CRX
 
             // Suscribirse a los eventos
             watcher.Changed += OnChanged;
-            watcher.Created += OnChanged;
-            watcher.Deleted += OnChanged;
-            watcher.Renamed += OnRenamed;
+            //watcher.Created += OnChanged;
+            //watcher.Deleted += OnChanged;
+            //watcher.Renamed += OnRenamed;
 
             // Comenzar a monitorear
             watcher.EnableRaisingEvents = true;
@@ -112,10 +112,50 @@ namespace AEM_Push_CRX
                 if (FileHasChanged(e.FullPath))
                 {
                     Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
+
+                    //mkdir tmp folder
+
+
+
+                    //TODO : Put when file is uploaded.
+                    CreateTempDirectory(e.FullPath);
                     UpdateTextBox(e.FullPath + " " + e.ChangeType);
                 }
             }
         }
+
+        private bool CreateTempDirectory(String path)
+        {
+
+            bool created = false;
+            try
+            {
+                string sourceFile = path;
+                string destinationDirectory = @"C:\windows\temp\aemtemp";
+                string destinationFile = Path.Combine(destinationDirectory, Path.GetFileName(sourceFile));
+
+                if (!Directory.Exists(destinationDirectory))
+                {
+                    // Crear el directorio de destino
+                    Directory.CreateDirectory(destinationDirectory);
+                    Debug.WriteLine($"Directorio creado: {destinationDirectory}");
+                }
+
+                // Copiar el archivo al directorio de destino
+                File.Copy(sourceFile, destinationFile, true);
+                Debug.WriteLine($"Archivo copiado a: {destinationFile}");
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("EXCEPTION !! " + ex.Message);
+                created = false;
+            }
+
+            return created;
+
+        }
+
 
         private void UpdateTextBox(string text)
         {
