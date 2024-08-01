@@ -1,6 +1,8 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace AEM_Push_CRX
@@ -28,15 +30,23 @@ namespace AEM_Push_CRX
         private LowLevelKeyboardProc _proc;
         private IntPtr _hookID = IntPtr.Zero;
 
+        private Curl curl;
+        private Dictionary<string, string> fileHashes;
+
         public Form1()
         {
             InitializeComponent();
             initFileWatcher();
-
             // Initialize the keyboard hook
+            //InitHooking();
+        }
+
+        private void InitHooking()
+        {   
             _proc = HookCallback;
             _hookID = SetHook(_proc);
         }
+
 
         private IntPtr SetHook(LowLevelKeyboardProc proc)
         {
@@ -74,6 +84,8 @@ namespace AEM_Push_CRX
         // Inicializar FileSystemWatcher
         private void initFileWatcher()
         {
+
+            fileHashes = new Dictionary<string, string>();
             string path = @"C:\utils";
             FileSystemWatcher watcher = new FileSystemWatcher
             {
@@ -92,12 +104,73 @@ namespace AEM_Push_CRX
         }
 
         // Métodos de manejo de eventos para FileSystemWatcher
-        private static void OnChanged(object source, FileSystemEventArgs e)
+        private void OnChanged(object source, FileSystemEventArgs e)
         {
-            Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
+            if (e.ChangeType == WatcherChangeTypes.Changed)
+            {
+                // Verificar si el contenido del archivo ha cambiado
+                if (FileHasChanged(e.FullPath))
+                {
+                    Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
+                    UpdateTextBox(e.FullPath + " " + e.ChangeType);
+                }
+            }
         }
 
-        private static void OnRenamed(object source, RenamedEventArgs e)
+        private void UpdateTextBox(string text)
+        {
+            if (filesChangedLoggerTextBox.InvokeRequired)
+            {
+                // Si estamos en un hilo diferente, usar Invoke para llamar a este método en el hilo de la UI
+                filesChangedLoggerTextBox.Invoke(new Action<string>(UpdateTextBox), text);
+            }
+            else
+            {
+                // Estamos en el hilo de la UI, podemos actualizar el TextBox directamente
+                filesChangedLoggerTextBox.AppendText(text);
+                filesChangedLoggerTextBox.AppendText(Environment.NewLine);
+
+            }
+        }
+
+        private bool FileHasChanged(string filePath)
+        {
+            try
+            {
+                string newHash = ComputeFileHash(filePath);
+
+                if (fileHashes.TryGetValue(filePath, out string oldHash))
+                {
+                    if (newHash == oldHash)
+                    {
+                        // El contenido no ha cambiado
+                        return false;
+                    }
+                }
+
+                // Actualizar el hash almacenado
+                fileHashes[filePath] = newHash;
+                return true;
+            }
+            catch (IOException)
+            {
+                // Manejar archivos que puedan estar siendo utilizados por otros procesos
+                return false;
+            }
+        }
+
+        private string ComputeFileHash(string filePath)
+        {
+            using (var md5 = MD5.Create())
+            using (var stream = File.OpenRead(filePath))
+            {
+                byte[] hash = md5.ComputeHash(stream);
+                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            }
+        }
+
+
+        private void OnRenamed(object source, RenamedEventArgs e)
         {
             Debug.WriteLine($"Archivo renombrado de {e.OldFullPath} a {e.FullPath}");
         }
@@ -108,5 +181,7 @@ namespace AEM_Push_CRX
             appFoldertextBox.Text = appBrowserDialog.SelectedPath;
 
         }
+
+
     }
 }
