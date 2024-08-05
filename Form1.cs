@@ -36,7 +36,7 @@ namespace AEM_Push_CRX
         public Form1()
         {
             InitializeComponent();
-            initFileWatcher();
+            //initFileWatcher();
             // Initialize the keyboard hook
             //InitHooking();
         }
@@ -82,11 +82,14 @@ namespace AEM_Push_CRX
         }
 
         // Inicializar FileSystemWatcher
-        private void initFileWatcher()
+        private void initFileWatcher(string filePath)
         {
 
             fileHashes = new Dictionary<string, string>();
-            string path = @"C:\utils";
+            //string path = @"C:\utils";
+            string path = filePath;  //@"C:\Utils\FileZilla_3.67.1_src\filezilla-3.67.1\data";
+
+
             FileSystemWatcher watcher = new FileSystemWatcher
             {
                 Path = path,
@@ -113,10 +116,6 @@ namespace AEM_Push_CRX
                 {
                     Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
 
-                    //mkdir tmp folder
-
-
-
                     //TODO : Put when file is uploaded.
                     CreateTempDirectory(e.FullPath);
                     UpdateTextBox(e.FullPath + " " + e.ChangeType);
@@ -126,7 +125,55 @@ namespace AEM_Push_CRX
 
         private bool CreateTempDirectory(String path)
         {
+            bool created = false;
+            try
+            {
+                string sourceFile = path;
+                string destinationDirectory = @"C:\windows\temp\aemtemp";
+                CopyFileWithStructure(sourceFile, destinationDirectory);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("EXCEPTION !! " + ex.Message);
+                created = false;
+            }
 
+            return created;
+        }
+
+
+        private static void CopyFileWithStructure(string sourceFile, string destinationRoot)
+        {
+            // Obtener el directorio raíz de la ruta de origen
+            string sourceRoot = Path.GetPathRoot(sourceFile);
+            Debug.WriteLine("SOURCE ROOT: " + sourceRoot);
+
+            // Obtener la ruta relativa del archivo desde el directorio raíz de origen
+            string relativePath = Path.GetRelativePath(sourceRoot, sourceFile);
+            Debug.WriteLine("RELATIVE PATH: " + relativePath);
+
+            // Construir la ruta completa en el destino
+            string destinationFile = Path.Combine(destinationRoot, relativePath);
+            Debug.WriteLine("DESTINATION PATH: " + destinationFile);
+
+            // Obtener el directorio de destino
+            string destinationDirectory = Path.GetDirectoryName(destinationFile);
+            Debug.WriteLine("DESTINATION DIRECTORY: " + destinationDirectory);
+
+            // Crear los directorios necesarios en el destino
+            if (!Directory.Exists(destinationDirectory))
+            {
+                Directory.CreateDirectory(destinationDirectory);
+                Debug.WriteLine($"Directorio creado: {destinationDirectory}");
+            }
+
+            // Copiar el archivo al nuevo directorio
+            File.Copy(sourceFile, destinationFile, true);
+            Debug.WriteLine($"Archivo copiado a: {destinationFile}");
+        }
+
+        /*private bool CreateTempDirectory(String path)
+        {
             bool created = false;
             try
             {
@@ -153,8 +200,7 @@ namespace AEM_Push_CRX
             }
 
             return created;
-
-        }
+        }*/
 
 
         private void UpdateTextBox(string text)
@@ -219,6 +265,7 @@ namespace AEM_Push_CRX
         {
             appBrowserDialog.ShowDialog(this);
             appFoldertextBox.Text = appBrowserDialog.SelectedPath;
+            initFileWatcher(appBrowserDialog.SelectedPath);
 
         }
 
