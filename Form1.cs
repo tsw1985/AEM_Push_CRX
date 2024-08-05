@@ -95,7 +95,6 @@ namespace AEM_Push_CRX
 
             if (sourceFile.Contains("jcr_root"))
             {
-
                 string onlyFromAppsFolder = sourceFile.Split("jcr_root")[1];
                 //sourceFile = onlyFromAppsFolder;
 
@@ -110,8 +109,7 @@ namespace AEM_Push_CRX
                 Debug.WriteLine("RELATIVE PATH: " + relativePath);
 
                 // Construir la ruta completa en el destino
-                //string destinationFile = Path.Combine(destinationRoot, relativePath);
-                string destinationFile = destinationRoot + relativePath;
+                string destinationFile = destinationRoot + "\\jcr_root" + relativePath;
                 Debug.WriteLine("DESTINATION PATH: " + destinationFile);
 
                 // Obtener el directorio de destino
