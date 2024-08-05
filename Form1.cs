@@ -31,8 +31,7 @@ namespace AEM_Push_CRX
         {
 
             fileHashes = new Dictionary<string, string>();
-            //string path = @"C:\utils";
-            string path = filePath;  //@"C:\Utils\FileZilla_3.67.1_src\filezilla-3.67.1\data";
+            string path = filePath;
 
 
             FileSystemWatcher watcher = new FileSystemWatcher
@@ -62,6 +61,10 @@ namespace AEM_Push_CRX
                     Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
 
                     //TODO : Put when file is uploaded.
+
+
+                    // pkg\jcr_root\apps\icex-elena\components\content\breadcrumb
+
                     CreateTempDirectory(e.FullPath);
                     UpdateTextBox(e.FullPath + " " + e.ChangeType);
                 }
@@ -89,64 +92,47 @@ namespace AEM_Push_CRX
 
         private static void CopyFileWithStructure(string sourceFile, string destinationRoot)
         {
-            // Obtener el directorio raíz de la ruta de origen
-            string sourceRoot = Path.GetPathRoot(sourceFile);
-            Debug.WriteLine("SOURCE ROOT: " + sourceRoot);
 
-            // Obtener la ruta relativa del archivo desde el directorio raíz de origen
-            string relativePath = Path.GetRelativePath(sourceRoot, sourceFile);
-            Debug.WriteLine("RELATIVE PATH: " + relativePath);
-
-            // Construir la ruta completa en el destino
-            string destinationFile = Path.Combine(destinationRoot, relativePath);
-            Debug.WriteLine("DESTINATION PATH: " + destinationFile);
-
-            // Obtener el directorio de destino
-            string destinationDirectory = Path.GetDirectoryName(destinationFile);
-            Debug.WriteLine("DESTINATION DIRECTORY: " + destinationDirectory);
-
-            // Crear los directorios necesarios en el destino
-            if (!Directory.Exists(destinationDirectory))
+            if (sourceFile.Contains("jcr_root"))
             {
-                Directory.CreateDirectory(destinationDirectory);
-                Debug.WriteLine($"Directorio creado: {destinationDirectory}");
-            }
 
-            // Copiar el archivo al nuevo directorio
-            File.Copy(sourceFile, destinationFile, true);
-            Debug.WriteLine($"Archivo copiado a: {destinationFile}");
-        }
+                string onlyFromAppsFolder = sourceFile.Split("jcr_root")[1];
+                //sourceFile = onlyFromAppsFolder;
 
-        /*private bool CreateTempDirectory(String path)
-        {
-            bool created = false;
-            try
-            {
-                string sourceFile = path;
-                string destinationDirectory = @"C:\windows\temp\aemtemp";
-                string destinationFile = Path.Combine(destinationDirectory, Path.GetFileName(sourceFile));
 
+                // Obtener el directorio raíz de la ruta de origen
+                string sourceRoot = Path.GetPathRoot(sourceFile);
+                Debug.WriteLine("SOURCE ROOT: " + sourceRoot);
+
+                // Obtener la ruta relativa del archivo desde el directorio raíz de origen
+                //string relativePath = Path.GetRelativePath(sourceRoot, sourceFile);
+                string relativePath = onlyFromAppsFolder;// Path.GetRelativePath(onlyFromAppsFolder, sourceFile);
+                Debug.WriteLine("RELATIVE PATH: " + relativePath);
+
+                // Construir la ruta completa en el destino
+                //string destinationFile = Path.Combine(destinationRoot, relativePath);
+                string destinationFile = destinationRoot + relativePath;
+                Debug.WriteLine("DESTINATION PATH: " + destinationFile);
+
+                // Obtener el directorio de destino
+                string destinationDirectory = Path.GetDirectoryName(destinationFile);
+                Debug.WriteLine("DESTINATION DIRECTORY: " + destinationDirectory);
+
+                // Crear los directorios necesarios en el destino
                 if (!Directory.Exists(destinationDirectory))
                 {
-                    // Crear el directorio de destino
                     Directory.CreateDirectory(destinationDirectory);
                     Debug.WriteLine($"Directorio creado: {destinationDirectory}");
                 }
 
-                // Copiar el archivo al directorio de destino
+                // Copiar el archivo al nuevo directorio
                 File.Copy(sourceFile, destinationFile, true);
                 Debug.WriteLine($"Archivo copiado a: {destinationFile}");
 
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("EXCEPTION !! " + ex.Message);
-                created = false;
-            }
+        }
 
-            return created;
-        }*/
-
+        
 
         private void UpdateTextBox(string text)
         {
@@ -211,9 +197,6 @@ namespace AEM_Push_CRX
             appBrowserDialog.ShowDialog(this);
             appFoldertextBox.Text = appBrowserDialog.SelectedPath;
             initFileWatcher(appBrowserDialog.SelectedPath);
-
         }
-
-
     }
 }
