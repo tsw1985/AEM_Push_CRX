@@ -1,9 +1,13 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace AEM_Push_CRX
 {
@@ -95,9 +99,9 @@ namespace AEM_Push_CRX
 
             if (sourceFile.Contains("jcr_root"))
             {
+                // *************************** Copy html file *****************************
                 string onlyFromAppsFolder = sourceFile.Split("jcr_root")[1];
                 //sourceFile = onlyFromAppsFolder;
-
 
                 // Obtener el directorio raíz de la ruta de origen
                 string sourceRoot = Path.GetPathRoot(sourceFile);
@@ -126,6 +130,37 @@ namespace AEM_Push_CRX
                 // Copiar el archivo al nuevo directorio
                 File.Copy(sourceFile, destinationFile, true);
                 Debug.WriteLine($"Archivo copiado a: {destinationFile}");
+                // *************************** END Copy html file *****************************
+
+
+                //create XML FILE on vault.
+                destinationFile = destinationFile.Replace("\\jcr_root", "");
+                destinationFile = destinationRoot + "\\META-INF\\vault\\";
+                destinationDirectory = Path.GetDirectoryName(destinationFile);
+                Debug.WriteLine("DESTINATION VAULT DIRECTORY: " + destinationDirectory);
+
+                // Crear los directorios necesarios en el destino
+                if (!Directory.Exists(destinationDirectory))
+                {
+                    Directory.CreateDirectory(destinationDirectory);
+                    Debug.WriteLine($"Directorio VAULT creado: {destinationDirectory}");
+                }
+
+
+                string filtersXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                    "<workspaceFilter version=\"1.0\">\n" +
+                                    "    <filter root=\"" + relativePath.Replace("\\" , "/") + "\"/>\n" +
+                                    "</workspaceFilter>";
+
+                Debug.WriteLine(filtersXML);
+
+                //TODO:
+                // write file filters with this content on target path
+                // write properties.xml file
+                // zip file
+                // push curl and testing
+              
+
 
             }
         }
