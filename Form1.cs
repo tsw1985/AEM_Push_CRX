@@ -8,6 +8,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.IO.Compression;
+
 
 namespace AEM_Push_CRX
 {
@@ -19,6 +21,7 @@ namespace AEM_Push_CRX
         public Form1()
         {
             InitializeComponent();
+            curl = new Curl();
             //initFileWatcher();
             // Initialize the keyboard hook
             //InitHooking();
@@ -65,8 +68,6 @@ namespace AEM_Push_CRX
                     Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
 
                     //TODO : Put when file is uploaded.
-
-
                     // pkg\jcr_root\apps\icex-elena\components\content\breadcrumb
 
                     CreateTempDirectory(e.FullPath);
@@ -94,7 +95,7 @@ namespace AEM_Push_CRX
         }
 
 
-        private static void CopyFileWithStructure(string sourceFile, string destinationRoot)
+        private void CopyFileWithStructure(string sourceFile, string destinationRoot)
         {
 
             if (sourceFile.Contains("jcr_root"))
@@ -128,6 +129,7 @@ namespace AEM_Push_CRX
                 }
 
                 // Copiar el archivo al nuevo directorio
+                //String backUpDestinationFilePath = destinationFile;
                 File.Copy(sourceFile, destinationFile, true);
                 Debug.WriteLine($"Archivo copiado a: {destinationFile}");
                 // *************************** END Copy html file *****************************
@@ -147,25 +149,85 @@ namespace AEM_Push_CRX
                 }
 
 
-                string filtersXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                String filtersXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                                     "<workspaceFilter version=\"1.0\">\n" +
                                     "    <filter root=\"" + relativePath.Replace("\\" , "/") + "\"/>\n" +
                                     "</workspaceFilter>";
 
+
+                String currentTimeStamp = getCurrentDateTimeStamp();
+                String propertiesXML = @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""no""?>
+                                        <!DOCTYPE properties SYSTEM ""http://java.sun.com/dtd/properties.dtd"">
+                                        <properties>
+                                            <entry key=""name"">MyAEM_CRX</entry>
+                                            <entry key=""version"">${randomVersion}</entry>
+                                            <entry key=""group"">tmp/repo</entry>
+                                        </properties>"
+                                        //.Replace("${replacePath}", getPathName(relativePath))
+                                        .Replace("${randomVersion}", currentTimeStamp);
+                                        
+
+
+
                 Debug.WriteLine(filtersXML);
+                Debug.WriteLine("------------------------------------");
+                Debug.WriteLine(propertiesXML);
+
+                //write files properties and filters.xml
+                String filtersFileXML = destinationDirectory + "\\filters.xml";
+                String propertiesFileXML = destinationDirectory + "\\properties.xml";
+
+                File.WriteAllText(filtersFileXML, filtersXML);
+                File.WriteAllText(propertiesFileXML, propertiesXML);
+
+
+
+                //Zip the folder @"C:\windows\temp\aemtemp";
+                String sourceZipFolder = @"C:\windows\temp\aemtemp";
+                String folderZippedFile = @"C:\windows\temp\aemtemp.zip";
+
+                // Elimina el archivo .zip si ya existe
+                if (File.Exists(folderZippedFile))
+                {
+                    File.Delete(folderZippedFile);
+                }
+
+                // Crea el archivo .zip desde el directorio especificado
+                ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
+
+
+                //curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp);
+
+
+
+
 
                 //TODO:
                 // write file filters with this content on target path
                 // write properties.xml file
                 // zip file
                 // push curl and testing
-              
+
 
 
             }
         }
 
-        
+        private String getPathName(String path)
+        {
+            // repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html
+            return "repo" + path.Replace("\\", "-");
+        }
+
+        private String getCurrentDateTimeStamp()
+        {
+            DateTime now = DateTime.UtcNow;
+
+            // Convertir la fecha y hora actual en un timestamp (segundos desde la época Unix)
+            long timestamp = ((DateTimeOffset)now).ToUnixTimeSeconds();
+            return timestamp.ToString();
+        }
+
 
         private void UpdateTextBox(string text)
         {
