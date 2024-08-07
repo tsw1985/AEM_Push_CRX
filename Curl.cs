@@ -17,7 +17,6 @@ namespace AEM_Push_CRX
         public bool uploadFile(String path, String relativePath, String timestamp)
         {
             bool result = false;
-            //curl -u admin:admin -f -s -S -F package=@/tmp/repo.kLt/pkg.zip -F force=true http://192.168.1.196:4502/crx/packmgr/service/.json?cmd=upload 
             Debug.WriteLine("Uploading file: " + path);
 
             try
@@ -51,14 +50,9 @@ namespace AEM_Push_CRX
                 }
 
 
-                // Ejecutar el proceso INSTALL
-                // Define el comando curl
-
                 //funciona a mano :        curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1723065259.zip?cmd=install
-                //                         curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1723065372.zip?cmd=install
 
-
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
 
                 string commandInstallZip = "curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\","-") + "-" + timestamp + ".zip" + "?cmd=install";
 
@@ -89,7 +83,41 @@ namespace AEM_Push_CRX
                     Debug.WriteLine("Comando INSTALL ejecutado exitosamente:\n" + output);
                 }
 
-                
+
+                //DELETE PACKAGE
+
+                string commandDeleteZip = "curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=delete";
+
+                Debug.WriteLine("COMMANDO DELETE: " + commandDeleteZip);
+
+                // Configurar el proceso
+                var processStartInfoDeleteFile = new ProcessStartInfo("cmd", "/c " + commandDeleteZip)
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+
+                using (var processDelete = new Process { StartInfo = processStartInfoDeleteFile })
+                {
+                    processDelete.Start();
+                    string output = processDelete.StandardOutput.ReadToEnd();
+                    string error = processDelete.StandardError.ReadToEnd();
+                    processDelete.WaitForExit();
+
+                    // Mostrar el resultado o error en la consola de depuración
+                    Debug.WriteLine("DELETING - Error Output: " + output);
+                    Debug.WriteLine("DELETING - Error: " + error);
+
+                    // Mostrar el resultado en un cuadro de mensaje
+                    Debug.WriteLine("Comando DELETE ejecutado exitosamente:\n" + output);
+                }
+
+
+
+
 
             }
             catch (Exception ex)
