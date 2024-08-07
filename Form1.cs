@@ -155,15 +155,20 @@ namespace AEM_Push_CRX
                                     "</workspaceFilter>";
 
 
+                filtersXML = filtersXML.Replace("\\", "/");
+
+
                 String currentTimeStamp = getCurrentDateTimeStamp();
-                String propertiesXML = @"<?xml version=""1.0"" encoding=""UTF-8"" standalone=""no""?>
-                                        <!DOCTYPE properties SYSTEM ""http://java.sun.com/dtd/properties.dtd"">
-                                        <properties>
-                                            <entry key=""name"">MyAEM_CRX</entry>
-                                            <entry key=""version"">${randomVersion}</entry>
-                                            <entry key=""group"">tmp/repo</entry>
-                                        </properties>"
-                                        //.Replace("${replacePath}", getPathName(relativePath))
+                String propertiesXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                                       "<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n" +
+                                       "<properties>\n" +
+                                       "<entry key=\"name\">${replacePath}</entry>\n" +
+                                       "<entry key=\"version\">${randomVersion}</entry>\n" +
+                                       "<entry key=\"group\">tmp/repo</entry>\n" +
+                                       "</properties>";
+
+
+                propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp);
                                         
 
@@ -174,7 +179,7 @@ namespace AEM_Push_CRX
                 Debug.WriteLine(propertiesXML);
 
                 //write files properties and filters.xml
-                String filtersFileXML = destinationDirectory + "\\filters.xml";
+                String filtersFileXML = destinationDirectory + "\\filter.xml";
                 String propertiesFileXML = destinationDirectory + "\\properties.xml";
 
                 File.WriteAllText(filtersFileXML, filtersXML);
@@ -196,7 +201,7 @@ namespace AEM_Push_CRX
                 ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
 
 
-                //curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp);
+                curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp);
 
 
 

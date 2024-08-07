@@ -54,12 +54,18 @@ namespace AEM_Push_CRX
                 // Ejecutar el proceso INSTALL
                 // Define el comando curl
 
-                //funciona a mano :        curl - u admin: admin - f - s - S - X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1722979992.zip?cmd=install
+                //funciona a mano :        curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1723065259.zip?cmd=install
+                //                         curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1723065372.zip?cmd=install
 
-                string commanInstallZip = "curl - u admin: admin - f - s - S - X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\","-") + "-" + timestamp + ".zip" + "?cmd=install";
+
+                Thread.Sleep(1000);
+
+                string commandInstallZip = "curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\","-") + "-" + timestamp + ".zip" + "?cmd=install";
+
+                Debug.WriteLine("COMMANDO : " + commandInstallZip);
 
                 // Configurar el proceso
-                var processStartInfoInstallFile = new ProcessStartInfo("cmd", "/c " + commanInstallZip)
+                var processStartInfoInstallFile = new ProcessStartInfo("cmd", "/c " + commandInstallZip)
                 {
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -68,12 +74,12 @@ namespace AEM_Push_CRX
                 };
 
 
-                using (var process = new Process { StartInfo = processStartInfoUploadFile })
+                using (var processInstall = new Process { StartInfo = processStartInfoInstallFile })
                 {
-                    process.Start();
-                    string output = process.StandardOutput.ReadToEnd();
-                    string error = process.StandardError.ReadToEnd();
-                    process.WaitForExit();
+                    processInstall.Start();
+                    string output = processInstall.StandardOutput.ReadToEnd();
+                    string error = processInstall.StandardError.ReadToEnd();
+                    processInstall.WaitForExit();
 
                     // Mostrar el resultado o error en la consola de depuración
                     Debug.WriteLine("INSTALLING - Error Output: " + output);
