@@ -21,6 +21,16 @@ namespace AEM_Push_CRX
 
             try
             {
+
+                /* TODO
+                 *  CHECK IF THE FILE IT IS A .content.xml like a dialog. If it like it is you need
+                 *  remove some stuff on filter.xml
+                 *  
+                 *  Otherwise , you can continue with a normal .html file
+                 *
+                 */ 
+
+
                 // Define el comando curl
                 string commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://192.168.1.196:4502/crx/packmgr/service/.json?cmd=upload";
 
