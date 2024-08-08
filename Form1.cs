@@ -180,20 +180,21 @@ namespace AEM_Push_CRX
                                        "</properties>";
 
 
-                //check if we are uploading a dialog.xml file
+                //checkif it is a dialog.xml ...
                 if (relativePath.Contains("_cq_dialog\\.content.xml")) // file is a dialog
                 {
                     propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp)
                                         .Replace("_cq_dialog-", "cqdialog-");
                 }
-                else
+                else //if it is a .html file ...
                 {
+
                     propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp);
                 }
 
-
+                // It is a .content.xml for component name ??
                 if (relativePath.Contains("\\.content.xml"))
                 {
                     filtersXML = filtersXML.Replace("/.content.xml", "");
