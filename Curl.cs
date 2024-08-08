@@ -55,11 +55,6 @@ namespace AEM_Push_CRX
                     Debug.WriteLine("Comando UPLOAD ejecutado exitosamente:" + output);
                 }
 
-
-                //funciona a mano :        curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1723065259.zip?cmd=install
-
-                //Thread.Sleep(1000);
-
                 string commandInstallZip = "curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\","-") + "-" + timestamp + ".zip" + "?cmd=install";
 
                 Debug.WriteLine("COMMANDO : " + commandInstallZip);
@@ -121,10 +116,6 @@ namespace AEM_Push_CRX
                     Debug.WriteLine("Comando DELETE ejecutado exitosamente:\n" + output);
                 }
 
-
-
-
-
             }
             catch (Exception ex)
             {
@@ -140,6 +131,27 @@ namespace AEM_Push_CRX
         {
             bool result = false;
             Debug.WriteLine("Download fileee");
+
+
+            // comando manual para descargar
+
+            // 1 Build package
+            // http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip?cmd=build
+
+            //2 Download
+            //curl -u admin:admin -f -s -S -o /tmp/demo/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip
+            //curl -u admin:admin -f -s -S -o /tmp/demo/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip
+
+
+
+
+
+
+
+
+
+
+
             return result;
         }
     }
