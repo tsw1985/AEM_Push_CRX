@@ -27,8 +27,7 @@ namespace AEM_Push_CRX
                     relativePath = relativePath.Replace("_cq_dialog", "cqdialog");
                 }
 
-
-                // Define el comando curl
+               // Define el comando curl
                 string commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://192.168.1.196:4502/crx/packmgr/service/.json?cmd=upload";
 
                 // Configurar el proceso

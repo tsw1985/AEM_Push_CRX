@@ -193,6 +193,14 @@ namespace AEM_Push_CRX
                                         .Replace("${randomVersion}", currentTimeStamp);
                 }
 
+
+                if (relativePath.Contains("\\.content.xml"))
+                {
+                    filtersXML = filtersXML.Replace("/.content.xml", "");
+                }
+
+                
+
                 Debug.WriteLine(filtersXML);
                 Debug.WriteLine("------------------------------------");
                 Debug.WriteLine(propertiesXML);
