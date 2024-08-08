@@ -148,10 +148,22 @@ namespace AEM_Push_CRX
                     Debug.WriteLine($"Directorio VAULT creado: {destinationDirectory}");
                 }
 
+                String finalRelativePath = "";
+                if (relativePath.Contains("_cq_dialog\\.content.xml")) // file is a dialog
+                {
+                    finalRelativePath = relativePath.Replace("\\", "/");
+                    finalRelativePath = finalRelativePath.Replace("_cq_dialog/.content.xml", "cq:dialog");
+                }
+                else
+                {
+                    finalRelativePath = relativePath.Replace("\\", "/");
+                }
+
+
 
                 String filtersXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                                     "<workspaceFilter version=\"1.0\">\n" +
-                                    "    <filter root=\"" + relativePath.Replace("\\" , "/") + "\"/>\n" +
+                                    "    <filter root=\"" + finalRelativePath + "\"/>\n" +
                                     "</workspaceFilter>";
 
 
@@ -168,11 +180,18 @@ namespace AEM_Push_CRX
                                        "</properties>";
 
 
-                propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
+                //check if we are uploading a dialog.xml file
+                if (relativePath.Contains("_cq_dialog\\.content.xml")) // file is a dialog
+                {
+                    propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
+                                        .Replace("${randomVersion}", currentTimeStamp)
+                                        .Replace("_cq_dialog-", "cqdialog-");
+                }
+                else
+                {
+                    propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp);
-                                        
-
-
+                }
 
                 Debug.WriteLine(filtersXML);
                 Debug.WriteLine("------------------------------------");
@@ -184,7 +203,6 @@ namespace AEM_Push_CRX
 
                 File.WriteAllText(filtersFileXML, filtersXML);
                 File.WriteAllText(propertiesFileXML, propertiesXML);
-
 
 
                 //Zip the folder @"C:\windows\temp\aemtemp";
@@ -199,22 +217,7 @@ namespace AEM_Push_CRX
 
                 // Crea el archivo .zip desde el directorio especificado
                 ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
-
-
                 curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp);
-
-
-
-
-
-                //TODO:
-                // write file filters with this content on target path
-                // write properties.xml file
-                // zip file
-                // push curl and testing
-
-
-
             }
         }
 

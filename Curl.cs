@@ -18,17 +18,14 @@ namespace AEM_Push_CRX
         {
             bool result = false;
             Debug.WriteLine("Uploading file: " + path);
-
             try
             {
 
-                /* TODO
-                 *  CHECK IF THE FILE IT IS A .content.xml like a dialog. If it like it is you need
-                 *  remove some stuff on filter.xml
-                 *  
-                 *  Otherwise , you can continue with a normal .html file
-                 *
-                 */ 
+                //check if we are uploading a dialog
+                if (relativePath.Contains("_cq_dialog"))
+                {
+                    relativePath = relativePath.Replace("_cq_dialog", "cqdialog");
+                }
 
 
                 // Define el comando curl
