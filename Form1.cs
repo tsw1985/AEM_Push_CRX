@@ -69,7 +69,7 @@ namespace AEM_Push_CRX
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
                 String filePath = e.FullPath;
-                if (filePath.Contains(".html") || filePath.Contains(".xml") || filePath.Contains(".js"))
+                if (filePath.EndsWith(".html") || filePath.EndsWith(".xml") || filePath.EndsWith(".js"))
                 {
                     // Verificar si el contenido del archivo ha cambiado
                     if (FileHasChanged(filePath))
