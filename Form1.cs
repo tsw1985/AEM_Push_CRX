@@ -37,24 +37,30 @@ namespace AEM_Push_CRX
         private void initFileWatcher(string filePath)
         {
 
-            fileHashes = new Dictionary<string, string>();
-            string path = filePath;
-
-
-            FileSystemWatcher watcher = new FileSystemWatcher
+            if (!filePath.Equals(""))
             {
-                Path = path,
-                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName , IncludeSubdirectories = true
-            };
 
-            // Suscribirse a los eventos
-            watcher.Changed += OnChanged;
-            //watcher.Created += OnChanged;
-            //watcher.Deleted += OnChanged;
-            //watcher.Renamed += OnRenamed;
+                fileHashes = new Dictionary<string, string>();
+                string path = filePath;
 
-            // Comenzar a monitorear
-            watcher.EnableRaisingEvents = true;
+
+                FileSystemWatcher watcher = new FileSystemWatcher
+                {
+                    Path = path,
+                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+                    IncludeSubdirectories = true
+                };
+
+                // Suscribirse a los eventos
+                watcher.Changed += OnChanged;
+                //watcher.Created += OnChanged;
+                //watcher.Deleted += OnChanged;
+                //watcher.Renamed += OnRenamed;
+
+                // Comenzar a monitorear
+                watcher.EnableRaisingEvents = true;
+
+            }
         }
 
         // Métodos de manejo de eventos para FileSystemWatcher
@@ -62,16 +68,16 @@ namespace AEM_Push_CRX
         {
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
-                // Verificar si el contenido del archivo ha cambiado
-                if (FileHasChanged(e.FullPath))
+                String filePath = e.FullPath;
+                if (filePath.Contains(".html") || filePath.Contains(".xml") || filePath.Contains(".js"))
                 {
-                    Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
-
-                    //TODO : Put when file is uploaded.
-                    // pkg\jcr_root\apps\icex-elena\components\content\breadcrumb
-
-                    CreateTempDirectory(e.FullPath);
-                    UpdateTextBox(e.FullPath + " " + e.ChangeType);
+                    // Verificar si el contenido del archivo ha cambiado
+                    if (FileHasChanged(filePath))
+                    {
+                        Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
+                        CreateTempDirectory(filePath);
+                        UpdateTextBox(filePath + " " + e.ChangeType);
+                    }
                 }
             }
         }
@@ -226,7 +232,7 @@ namespace AEM_Push_CRX
 
                 // Crea el archivo .zip desde el directorio especificado
                 ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
-                curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp);
+                curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp , hostTextBox.Text , portTextBox.Text);
             }
         }
 
@@ -291,7 +297,7 @@ namespace AEM_Push_CRX
         private string ComputeFileHash(string filePath)
         {
             using (var md5 = MD5.Create())
-            using (var stream = File.OpenRead(filePath))
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 byte[] hash = md5.ComputeHash(stream);
                 return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();

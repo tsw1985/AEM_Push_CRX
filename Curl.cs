@@ -14,7 +14,7 @@ namespace AEM_Push_CRX
 
         public Curl() { }
 
-        public bool uploadFile(String path, String relativePath, String timestamp)
+        public bool uploadFile(String path, String relativePath, String timestamp , String host , String port)
         {
             bool result = false;
             Debug.WriteLine("Uploading file: " + path);
@@ -28,7 +28,7 @@ namespace AEM_Push_CRX
                 }
 
                // Define el comando curl
-                string commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://192.168.1.196:4502/crx/packmgr/service/.json?cmd=upload";
+                string commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
 
                 // Configurar el proceso
                 var processStartInfoUploadFile = new ProcessStartInfo("cmd", "/c " + commandUploadZip)
@@ -55,7 +55,7 @@ namespace AEM_Push_CRX
                     Debug.WriteLine("Comando UPLOAD ejecutado exitosamente:" + output);
                 }
 
-                string commandInstallZip = "curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\","-") + "-" + timestamp + ".zip" + "?cmd=install";
+                string commandInstallZip = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\","-") + "-" + timestamp + ".zip" + "?cmd=install";
 
                 Debug.WriteLine("COMMANDO : " + commandInstallZip);
 
@@ -87,7 +87,7 @@ namespace AEM_Push_CRX
 
                 //DELETE PACKAGE
 
-                string commandDeleteZip = "curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=delete";
+                string commandDeleteZip = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=delete";
 
                 Debug.WriteLine("COMMANDO DELETE: " + commandDeleteZip);
 
