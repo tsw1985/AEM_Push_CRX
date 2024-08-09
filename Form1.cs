@@ -222,6 +222,12 @@ namespace AEM_Push_CRX
 
                 //Zip the folder @"C:\windows\temp\aemtemp";
                 String sourceZipFolder = @"C:\windows\temp\aemtemp";
+                if (File.Exists(sourceZipFolder))
+                {
+                    File.Delete(sourceZipFolder);
+                }
+
+
                 String folderZippedFile = @"C:\windows\temp\aemtemp.zip";
 
                 // Elimina el archivo .zip si ya existe
