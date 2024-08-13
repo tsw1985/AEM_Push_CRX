@@ -39,6 +39,7 @@
             label3 = new Label();
             hostTextBox = new TextBox();
             label2 = new Label();
+            button1 = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -72,6 +73,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(button1);
             groupBox1.Controls.Add(filesChangedLoggerTextBox);
             groupBox1.Location = new Point(12, 174);
             groupBox1.Name = "groupBox1";
@@ -82,12 +84,12 @@
             // 
             // filesChangedLoggerTextBox
             // 
-            filesChangedLoggerTextBox.Location = new Point(7, 22);
+            filesChangedLoggerTextBox.Location = new Point(7, 52);
             filesChangedLoggerTextBox.Multiline = true;
             filesChangedLoggerTextBox.Name = "filesChangedLoggerTextBox";
             filesChangedLoggerTextBox.ReadOnly = true;
             filesChangedLoggerTextBox.ScrollBars = ScrollBars.Vertical;
-            filesChangedLoggerTextBox.Size = new Size(762, 242);
+            filesChangedLoggerTextBox.Size = new Size(762, 212);
             filesChangedLoggerTextBox.TabIndex = 0;
             // 
             // groupBox2
@@ -140,6 +142,16 @@
             label2.TabIndex = 3;
             label2.Text = "Host:";
             // 
+            // button1
+            // 
+            button1.Location = new Point(8, 20);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 1;
+            button1.Text = "Clean log";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -169,5 +181,6 @@
         private TextBox portTextBox;
         private Label label3;
         private TextBox hostTextBox;
+        private Button button1;
     }
 }

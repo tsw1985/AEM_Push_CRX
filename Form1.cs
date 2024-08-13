@@ -17,6 +17,7 @@ namespace AEM_Push_CRX
     {
         private Curl curl;
         private Dictionary<string, string> fileHashes;
+        FileSystemWatcher watcher;
 
         public Form1()
         {
@@ -40,11 +41,15 @@ namespace AEM_Push_CRX
             if (!filePath.Equals(""))
             {
 
+                filesChangedLoggerTextBox.Text = "Starting log on : " + filePath;
+                filesChangedLoggerTextBox.AppendText(Environment.NewLine);
+
+
                 fileHashes = new Dictionary<string, string>();
                 string path = filePath;
 
 
-                FileSystemWatcher watcher = new FileSystemWatcher
+                watcher = new FileSystemWatcher
                 {
                     Path = path,
                     NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
@@ -66,6 +71,7 @@ namespace AEM_Push_CRX
         // Métodos de manejo de eventos para FileSystemWatcher
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            System.Threading.Thread.Sleep(200); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
                 String filePath = e.FullPath;
@@ -206,7 +212,7 @@ namespace AEM_Push_CRX
                     filtersXML = filtersXML.Replace("/.content.xml", "");
                 }
 
-                
+
 
                 Debug.WriteLine(filtersXML);
                 Debug.WriteLine("------------------------------------");
@@ -238,7 +244,7 @@ namespace AEM_Push_CRX
 
                 // Crea el archivo .zip desde el directorio especificado
                 ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
-                curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp , hostTextBox.Text , portTextBox.Text);
+                curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp, hostTextBox.Text, portTextBox.Text);
             }
         }
 
@@ -321,6 +327,11 @@ namespace AEM_Push_CRX
             appBrowserDialog.ShowDialog(this);
             appFoldertextBox.Text = appBrowserDialog.SelectedPath;
             initFileWatcher(appBrowserDialog.SelectedPath);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            filesChangedLoggerTextBox.Text = "";
         }
     }
 }
