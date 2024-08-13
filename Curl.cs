@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -126,6 +127,21 @@ namespace AEM_Push_CRX
 
             return result;
         }
+
+        /*
+            /home/gabriel/DEVELOPER/code/JAVA/tools-repo-1.4/repo/repo get -f /home/gabriel/DEVELOPER/code/JAVA/icex-portalelena/ui.apps/src/main/content/jcr_root/apps/icex-elena/components/content/comunity/.content.xml
+            downloading /apps/icex-elena/components/content/comunity/.content.xml from http://192.168.1.196:4502
+            TEMP FOLDER ==> /tmp/repo.0KD
+            EXCLUDES ===> /tmp/repo.0KD/.excludes
+            parametro 2:  -F package =@/tmp/repo.0KD/pkg.zip -F force = true http://192.168.1.196:4502/crx/packmgr/service/.json?cmd=upload
+            **** CURL COMMAND: curl -u admin:admin -f -s -S -F package =@/tmp/repo.0KD/pkg.zip -F force = true http://192.168.1.196:4502/crx/packmgr/service/.json?cmd=upload 
+            parametro 2:  -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip?cmd=build
+            **** CURL COMMAND: curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip?cmd=build 
+            DOWNLOAD PACKAGE pkg : tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip
+            DOWNLOAD PACKAGE /tmp/repo.0KD/pkg.zip : /tmp/repo.0KD/pkg.zip
+            download_pkg_funtion params : -o /tmp/repo.0KD/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip
+            **** CURL COMMAND: curl -u admin:admin -f -s -S -o /tmp/repo.0KD/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip 
+        */
 
         public bool downloadFile(String path)
         {
