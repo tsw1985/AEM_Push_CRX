@@ -191,22 +191,19 @@ namespace AEM_Push_CRX
                                        "<entry key=\"group\">tmp/repo</entry>\n" +
                                        "</properties>";
 
-
-                //checkif it is a dialog.xml ...
-                if (relativePath.Contains("_cq_dialog\\.content.xml")) // file is a dialog
-                {
+                if (IsADialogXML(relativePath))
+                 {
                     propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp)
                                         .Replace("_cq_dialog-", "cqdialog-");
                 }
-                else //if it is a .html file ...
+                else //if it is a .html .js file ...
                 {
-
                     propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp);
                 }
 
-                // It is a .content.xml for component name ??
+                // It is a .content.xml for component name or other .content.xml file??
                 if (relativePath.Contains("\\.content.xml"))
                 {
                     filtersXML = filtersXML.Replace("/.content.xml", "");
@@ -244,8 +241,27 @@ namespace AEM_Push_CRX
 
                 // Crea el archivo .zip desde el directorio especificado
                 ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
-                curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp, hostTextBox.Text, portTextBox.Text);
+                curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp, 
+                    hostTextBox.Text, portTextBox.Text);
             }
+        }
+
+
+        private bool IsADialogXML(string relativePath)
+        {
+            bool isADialogXML = false;
+
+
+            // Obtener la ruta de la carpeta que contiene el archivo
+            string directoryPath = Path.GetDirectoryName(relativePath);
+
+            // Obtener la carpeta padre
+            string parentFolderName = new DirectoryInfo(directoryPath).Name;
+            if (parentFolderName.Equals("_cq_dialog"))
+            {
+                isADialogXML = true;
+            }
+            return isADialogXML;   
         }
 
         private String getPathName(String path)
