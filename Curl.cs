@@ -17,8 +17,13 @@ namespace AEM_Push_CRX
 
         public bool uploadFile(String path, String relativePath, String timestamp , String host , String port)
         {
-            bool result = false;
+            bool resultUpload = false;
+            bool resultInstall = false;
+            bool resultDelete = false;
+            String resultOK = "\"success\":true";
+
             Debug.WriteLine("Uploading file: " + path);
+
             try
             {
 
@@ -48,6 +53,11 @@ namespace AEM_Push_CRX
                     string error = process.StandardError.ReadToEnd();
                     process.WaitForExit();
 
+                    if (output.Contains(resultOK))
+                    {
+                        resultUpload = true;
+                    }
+
                     // Mostrar el resultado o error en la consola de depuración
                     Debug.WriteLine("Output: " + output);
                     Debug.WriteLine("Error: " + error);
@@ -76,6 +86,11 @@ namespace AEM_Push_CRX
                     string output = processInstall.StandardOutput.ReadToEnd();
                     string error = processInstall.StandardError.ReadToEnd();
                     processInstall.WaitForExit();
+
+                    if (output.Contains(resultOK))
+                    {
+                        resultInstall = true;
+                    }
 
                     // Mostrar el resultado o error en la consola de depuración
                     Debug.WriteLine("INSTALLING - Error Output: " + output);
@@ -109,6 +124,12 @@ namespace AEM_Push_CRX
                     string error = processDelete.StandardError.ReadToEnd();
                     processDelete.WaitForExit();
 
+
+                    if (output.Contains(resultOK))
+                    {
+                        resultDelete  = true;
+                    }
+
                     // Mostrar el resultado o error en la consola de depuración
                     Debug.WriteLine("DELETING - Error Output: " + output);
                     Debug.WriteLine("DELETING - Error: " + error);
@@ -123,7 +144,7 @@ namespace AEM_Push_CRX
                 // Mostrar cualquier excepción en un cuadro de mensaje
                 MessageBox.Show("Ocurrió un error al ejecutar el comando INSTALL:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            return result;
+            return resultInstall && resultDelete && resultUpload;
         }
 
         /*

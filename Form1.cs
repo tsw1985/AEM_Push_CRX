@@ -19,18 +19,76 @@ namespace AEM_Push_CRX
         private Dictionary<string, string> fileHashes;
         FileSystemWatcher watcher;
 
+        //Hooking
+        // Declaraciones de la API de Windows
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        // Delegado y constantes para el hook
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x0100;
+        private LowLevelKeyboardProc _proc;
+        private IntPtr _hookID = IntPtr.Zero;
+
+
+
         public Form1()
         {
             InitializeComponent();
             curl = new Curl();
             //initFileWatcher();
             // Initialize the keyboard hook
-            //InitHooking();
+            InitHooking();
+        }
+
+        private void InitHooking()
+        {
+            _proc = HookCallback;
+            _hookID = SetHook(_proc);
+        }
+
+        private IntPtr SetHook(LowLevelKeyboardProc proc)
+        {
+            using (Process curProcess = Process.GetCurrentProcess())
+            using (ProcessModule curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                Keys key = (Keys)vkCode;
+
+                // Verificar si se presionan Control + S
+                if (Control.ModifierKeys == Keys.Shift && key == Keys.F12)
+                {
+                    Debug.WriteLine("Pulsado Control + S");
+
+                }
+            }
+            // Pasar el evento al siguiente hook en la cadena
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             // Desenganchar el hook cuando el formulario se cierre
+            UnhookWindowsHookEx(_hookID);
             base.OnFormClosed(e);
         }
 
@@ -95,7 +153,7 @@ namespace AEM_Push_CRX
             {
                 string sourceFile = path;
                 string destinationDirectory = @"C:\windows\temp\aemtemp";
-                CopyFileWithStructure(sourceFile, destinationDirectory);
+                created = CopyFileWithStructure(sourceFile, destinationDirectory);
             }
             catch (Exception ex)
             {
@@ -107,8 +165,10 @@ namespace AEM_Push_CRX
         }
 
 
-        private void CopyFileWithStructure(string sourceFile, string destinationRoot)
+        private bool CopyFileWithStructure(string sourceFile, string destinationRoot )
         {
+
+            Boolean fileUploaded = false;
 
             if (sourceFile.Contains("jcr_root"))
             {
@@ -192,7 +252,7 @@ namespace AEM_Push_CRX
                                        "</properties>";
 
                 if (IsADialogXML(relativePath))
-                 {
+                {
                     propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp)
                                         .Replace("_cq_dialog-", "cqdialog-");
@@ -241,9 +301,11 @@ namespace AEM_Push_CRX
 
                 // Crea el archivo .zip desde el directorio especificado
                 ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
-                curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp, 
+                fileUploaded = curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp,
                     hostTextBox.Text, portTextBox.Text);
             }
+
+            return fileUploaded;
         }
 
 
@@ -261,7 +323,7 @@ namespace AEM_Push_CRX
             {
                 isADialogXML = true;
             }
-            return isADialogXML;   
+            return isADialogXML;
         }
 
         private String getPathName(String path)
@@ -348,6 +410,23 @@ namespace AEM_Push_CRX
         private void button1_Click(object sender, EventArgs e)
         {
             filesChangedLoggerTextBox.Text = "";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //openFileDialog
+        }
+
+        private void searchFileButton_Click(object sender, EventArgs e)
+        {
+            if( openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                pathPullFileTextBox.Text = openFileDialog.FileName;
+                if(UploadFile(openFileDialog.FileName))
+                {
+                    resultPullFileTextBox.Text = "Success : File downloaded";
+                }
+            }
         }
     }
 }
