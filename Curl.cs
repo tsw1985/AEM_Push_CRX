@@ -123,8 +123,6 @@ namespace AEM_Push_CRX
                 // Mostrar cualquier excepción en un cuadro de mensaje
                 MessageBox.Show("Ocurrió un error al ejecutar el comando INSTALL:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-
             return result;
         }
 

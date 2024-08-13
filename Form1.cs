@@ -81,14 +81,14 @@ namespace AEM_Push_CRX
                     if (FileHasChanged(filePath))
                     {
                         Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
-                        CreateTempDirectory(filePath);
+                        UploadFile(filePath);
                         UpdateTextBox(filePath + " " + e.ChangeType);
                     }
                 }
             }
         }
 
-        private bool CreateTempDirectory(String path)
+        private bool UploadFile(String path)
         {
             bool created = false;
             try
