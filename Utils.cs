@@ -29,9 +29,9 @@ namespace AEM_Push_CRX
         }
 
 
-        public bool CreateEmtpyZipPkg(String sourceFile, String destinationRoot)
+        public String CreateEmtpyZipPkg(String sourceFile, String destinationRoot , String currentTimeStamp)
         {
-            bool folderCreated = false;
+            string relativePath = "";
 
             if (sourceFile.Contains("jcr_root"))
             {
@@ -46,7 +46,7 @@ namespace AEM_Push_CRX
                     Debug.WriteLine("SOURCE ROOT: " + sourceRoot);
 
                     // Obtener la ruta relativa del archivo desde el directorio raíz de origen
-                    string relativePath = onlyFromAppsFolder;
+                    relativePath = onlyFromAppsFolder;
                     Debug.WriteLine("RELATIVE PATH: " + relativePath);
 
                     // Construir la ruta completa en el destino
@@ -101,7 +101,7 @@ namespace AEM_Push_CRX
 
                     filtersXML = filtersXML.Replace("\\", "/");
 
-                    String currentTimeStamp = GetCurrentDateTimeStamp();
+                    //String currentTimeStamp = GetCurrentDateTimeStamp();
                     String propertiesXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                                            "<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n" +
                                            "<properties>\n" +
@@ -157,10 +157,6 @@ namespace AEM_Push_CRX
 
                     // Crea el archivo .zip desde el directorio especificado
                     ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
-
-                    folderCreated = true;
-                    //fileUploaded = curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp,
-                    //hostTextBox.Text, portTextBox.Text);
                 }
                 catch (Exception ex)
                 {
@@ -169,7 +165,7 @@ namespace AEM_Push_CRX
                 
             }
 
-            return folderCreated;
+            return GetPathName(relativePath);
         }
 
 

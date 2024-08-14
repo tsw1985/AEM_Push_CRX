@@ -56,21 +56,26 @@ namespace AEM_Push_CRX
         }
 
 
-        public bool downloadFile(String path)
+        public bool downloadFile(String path , String host, String port , String timeStamp , String relativePath)
         {
-            bool result = false;
+            bool resultUpload = false;
+            bool resultBuild = false;
             Debug.WriteLine("Download fileee");
 
+            //1 Upload package
+            String commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
+            resultUpload = ExecuteCurl(commandUploadZip);
 
-            // comando manual para descargar
+            System.Threading.Thread.Sleep(1000);
 
-            // 1 Build package
-            // http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip?cmd=build
+            //2 build package
+            string commandBuildPackage = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath                                           + "-" + timeStamp + ".zip" + "?cmd=build";
+            resultBuild = ExecuteCurl(commandBuildPackage);
 
-            //2 Download
-            //curl -u admin:admin -f -s -S -o /tmp/demo/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip
-            //curl -u admin:admin -f -s -S -o /tmp/demo/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip
-            return result;
+            //3 Download zip , extract it and put file on the same path
+
+
+            return resultUpload;
         }
 
 

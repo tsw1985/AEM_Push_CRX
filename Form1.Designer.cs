@@ -52,6 +52,10 @@
             label2 = new Label();
             groupBox3 = new GroupBox();
             openFileDialog = new OpenFileDialog();
+            label6 = new Label();
+            textBox1 = new TextBox();
+            label7 = new Label();
+            textBox2 = new TextBox();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
             pushTabPage.SuspendLayout();
@@ -269,6 +273,10 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(textBox2);
+            groupBox3.Controls.Add(label7);
+            groupBox3.Controls.Add(textBox1);
+            groupBox3.Controls.Add(label6);
             groupBox3.Controls.Add(portTextBox);
             groupBox3.Controls.Add(label2);
             groupBox3.Controls.Add(label3);
@@ -283,6 +291,39 @@
             // openFileDialog
             // 
             openFileDialog.FileName = "filePath";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(338, 26);
+            label6.Name = "label6";
+            label6.Size = new Size(60, 15);
+            label6.TabIndex = 7;
+            label6.Text = "Username";
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(404, 23);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(139, 23);
+            textBox1.TabIndex = 8;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(553, 27);
+            label7.Name = "label7";
+            label7.Size = new Size(57, 15);
+            label7.TabIndex = 9;
+            label7.Text = "Password";
+            // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(614, 23);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(100, 23);
+            textBox2.TabIndex = 10;
+            textBox2.TextChanged += textBox2_TextChanged;
             // 
             // Form1
             // 
@@ -332,5 +373,9 @@
         private Label label5;
         private TextBox resultPullFileTextBox;
         private Button pullFromCrxButton;
+        private TextBox textBox2;
+        private Label label7;
+        private TextBox textBox1;
+        private Label label6;
     }
 }

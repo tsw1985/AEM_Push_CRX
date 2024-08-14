@@ -317,7 +317,7 @@ namespace AEM_Push_CRX
             {
                 pathPullFileTextBox.Text = openFileDialog.FileName;
                 pullFromCrxButton.Enabled = true;
-                
+
             }
         }
 
@@ -325,12 +325,12 @@ namespace AEM_Push_CRX
         {
             if (!pathPullFileTextBox.Text.Equals(""))
             {
-                if (PullFile(pathPullFileTextBox.Text , DESTINATION_DIRECTORY))
+                if (PullFile(pathPullFileTextBox.Text, DESTINATION_DIRECTORY))
                 {
                     resultPullFileTextBox.Text = "Success : File downloaded";
                 }
             }
-            
+
         }
 
 
@@ -339,9 +339,17 @@ namespace AEM_Push_CRX
             bool created = false;
             try
             {
-                if (utils.CreateEmtpyZipPkg(path, destinationRootPath))
+
+                String timeStamp = utils.GetCurrentDateTimeStamp();
+
+                String relativePath = utils.CreateEmtpyZipPkg(path, destinationRootPath, timeStamp);
+
+                if (!relativePath.Equals(""))
                 {
-                    MessageBox.Show("ZIP PULL CREATED !!");
+
+                    curl.downloadFile(FOLDER_ZIPPED_FILE, hostTextBox.Text, portTextBox.Text, timeStamp , relativePath);
+                    //MessageBox.Show("ZIP PULL CREATED !!");
+
                 }
 
 
@@ -358,14 +366,9 @@ namespace AEM_Push_CRX
             return created;
         }
 
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
 
-
-
-
-
-
-
-
-
+        }
     }
 }
