@@ -20,79 +20,11 @@ namespace AEM_Push_CRX
         private Utils utils;
         FileSystemWatcher watcher;
 
-        //Hooking
-        // Declaraciones de la API de Windows
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr GetModuleHandle(string lpModuleName);
-
-        // Delegado y constantes para el hook
-        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-        private const int WH_KEYBOARD_LL = 13;
-        private const int WM_KEYDOWN = 0x0100;
-        private LowLevelKeyboardProc _proc;
-        private IntPtr _hookID = IntPtr.Zero;
-
-
-
         public Form1()
         {
             InitializeComponent();
             utils = new Utils();
             curl = new Curl(utils);
-            
-            //initFileWatcher();
-            // Initialize the keyboard hook
-            InitHooking();
-        }
-
-        private void InitHooking()
-        {
-            _proc = HookCallback;
-            _hookID = SetHook(_proc);
-        }
-
-        private IntPtr SetHook(LowLevelKeyboardProc proc)
-        {
-            using (Process curProcess = Process.GetCurrentProcess())
-            using (ProcessModule curModule = curProcess.MainModule)
-            {
-                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
-            }
-        }
-
-        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
-            {
-                int vkCode = Marshal.ReadInt32(lParam);
-                Keys key = (Keys)vkCode;
-
-                // Verificar si se presionan Control + S
-                if (Control.ModifierKeys == Keys.Shift && key == Keys.F12)
-                {
-                    Debug.WriteLine("Pulsado Control + S");
-
-                }
-            }
-            // Pasar el evento al siguiente hook en la cadena
-            return CallNextHookEx(_hookID, nCode, wParam, lParam);
-        }
-
-        protected override void OnFormClosed(FormClosedEventArgs e)
-        {
-            // Desenganchar el hook cuando el formulario se cierre
-            UnhookWindowsHookEx(_hookID);
-            base.OnFormClosed(e);
         }
 
         // Inicializar FileSystemWatcher
@@ -168,7 +100,7 @@ namespace AEM_Push_CRX
         }
 
 
-        private bool CopyFileWithStructure(string sourceFile, string destinationRoot )
+        private bool CopyFileWithStructure(String sourceFile, String destinationRoot )
         {
 
             Boolean fileUploaded = false;
@@ -224,7 +156,7 @@ namespace AEM_Push_CRX
                 }
 
                 String finalRelativePath = "";
-                if (relativePath.Contains("_cq_dialog\\.content.xml")) // file is a dialog
+                if (utils.IsADialogXML(relativePath))
                 {
                     finalRelativePath = relativePath.Replace("\\", "/");
                     finalRelativePath = finalRelativePath.Replace("_cq_dialog/.content.xml", "cq:dialog");
@@ -234,18 +166,14 @@ namespace AEM_Push_CRX
                     finalRelativePath = relativePath.Replace("\\", "/");
                 }
 
-
-
                 String filtersXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                                     "<workspaceFilter version=\"1.0\">\n" +
                                     "    <filter root=\"" + finalRelativePath + "\"/>\n" +
                                     "</workspaceFilter>";
-
-
+                
                 filtersXML = filtersXML.Replace("\\", "/");
 
-
-                String currentTimeStamp = getCurrentDateTimeStamp();
+                String currentTimeStamp = utils.GetCurrentDateTimeStamp();
                 String propertiesXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                                        "<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n" +
                                        "<properties>\n" +
@@ -256,13 +184,13 @@ namespace AEM_Push_CRX
 
                 if (utils.IsADialogXML(relativePath))
                 {
-                    propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
+                    propertiesXML = propertiesXML.Replace("${replacePath}", utils.GetPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp)
                                         .Replace("_cq_dialog-", "cqdialog-");
                 }
                 else //if it is a .html .js file ...
                 {
-                    propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
+                    propertiesXML = propertiesXML.Replace("${replacePath}", utils.GetPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp);
                 }
 
@@ -271,8 +199,6 @@ namespace AEM_Push_CRX
                 {
                     filtersXML = filtersXML.Replace("/.content.xml", "");
                 }
-
-
 
                 Debug.WriteLine(filtersXML);
                 Debug.WriteLine("------------------------------------");
@@ -309,24 +235,6 @@ namespace AEM_Push_CRX
             }
 
             return fileUploaded;
-        }
-
-
-        
-
-        private String getPathName(String path)
-        {
-            // repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html
-            return "repo" + path.Replace("\\", "-");
-        }
-
-        private String getCurrentDateTimeStamp()
-        {
-            DateTime now = DateTime.UtcNow;
-
-            // Convertir la fecha y hora actual en un timestamp (segundos desde la época Unix)
-            long timestamp = ((DateTimeOffset)now).ToUnixTimeSeconds();
-            return timestamp.ToString();
         }
 
 
