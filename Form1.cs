@@ -19,6 +19,8 @@ namespace AEM_Push_CRX
         private Dictionary<string, string> fileHashes;
         private Utils utils;
         FileSystemWatcher watcher;
+        private static string DESTINATION_DIRECTORY = @"C:\windows\temp\aemtemp";
+        private static String FOLDER_ZIPPED_FILE = @"C:\windows\temp\aemtemp.zip";
 
         public Form1()
         {
@@ -36,7 +38,6 @@ namespace AEM_Push_CRX
 
                 filesChangedLoggerTextBox.Text = "Starting log on : " + filePath;
                 filesChangedLoggerTextBox.AppendText(Environment.NewLine);
-
 
                 fileHashes = new Dictionary<string, string>();
                 string path = filePath;
@@ -87,8 +88,8 @@ namespace AEM_Push_CRX
             try
             {
                 string sourceFile = path;
-                string destinationDirectory = @"C:\windows\temp\aemtemp";
-                created = CopyFileWithStructure(sourceFile, destinationDirectory);
+                //string destinationDirectory = @"C:\windows\temp\aemtemp";
+                created = CopyFileWithStructure(sourceFile, DESTINATION_DIRECTORY);
             }
             catch (Exception ex)
             {
@@ -100,7 +101,7 @@ namespace AEM_Push_CRX
         }
 
 
-        private bool CopyFileWithStructure(String sourceFile, String destinationRoot )
+        private bool CopyFileWithStructure(String sourceFile, String destinationRoot)
         {
 
             Boolean fileUploaded = false;
@@ -170,7 +171,7 @@ namespace AEM_Push_CRX
                                     "<workspaceFilter version=\"1.0\">\n" +
                                     "    <filter root=\"" + finalRelativePath + "\"/>\n" +
                                     "</workspaceFilter>";
-                
+
                 filtersXML = filtersXML.Replace("\\", "/");
 
                 String currentTimeStamp = utils.GetCurrentDateTimeStamp();
@@ -220,17 +221,17 @@ namespace AEM_Push_CRX
                 }
 
 
-                String folderZippedFile = @"C:\windows\temp\aemtemp.zip";
+                //String folderZippedFile = @"C:\windows\temp\aemtemp.zip";
 
                 // Elimina el archivo .zip si ya existe
-                if (File.Exists(folderZippedFile))
+                if (File.Exists(FOLDER_ZIPPED_FILE))
                 {
-                    File.Delete(folderZippedFile);
+                    File.Delete(FOLDER_ZIPPED_FILE);
                 }
 
                 // Crea el archivo .zip desde el directorio especificado
-                ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
-                fileUploaded = curl.uploadFile(folderZippedFile, relativePath, currentTimeStamp,
+                ZipFile.CreateFromDirectory(sourceZipFolder, FOLDER_ZIPPED_FILE);
+                fileUploaded = curl.uploadFile(FOLDER_ZIPPED_FILE, relativePath, currentTimeStamp,
                     hostTextBox.Text, portTextBox.Text);
             }
 
@@ -308,21 +309,63 @@ namespace AEM_Push_CRX
             filesChangedLoggerTextBox.Text = "";
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            //openFileDialog
-        }
+
 
         private void searchFileButton_Click(object sender, EventArgs e)
         {
-            if( openFileDialog.ShowDialog() == DialogResult.OK)
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 pathPullFileTextBox.Text = openFileDialog.FileName;
-                if(UploadFile(openFileDialog.FileName))
+                pullFromCrxButton.Enabled = true;
+                
+            }
+        }
+
+        private void pullFromCrxButton_Click(object sender, EventArgs e)
+        {
+            if (!pathPullFileTextBox.Text.Equals(""))
+            {
+                if (PullFile(pathPullFileTextBox.Text , DESTINATION_DIRECTORY))
                 {
                     resultPullFileTextBox.Text = "Success : File downloaded";
                 }
             }
+            
         }
+
+
+        private bool PullFile(String path, String destinationRootPath)
+        {
+            bool created = false;
+            try
+            {
+                if (utils.CreateEmtpyZipPkg(path, destinationRootPath))
+                {
+                    MessageBox.Show("ZIP PULL CREATED !!");
+                }
+
+
+
+
+                //MessageBox.Show("PULL!");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Pull FILE EXCEPTION !! " + ex.Message);
+                created = false;
+            }
+
+            return created;
+        }
+
+
+
+
+
+
+
+
+
+
     }
 }

@@ -56,13 +56,28 @@ namespace AEM_Push_CRX
         }
 
 
+        public bool downloadFile(String path)
+        {
+            bool result = false;
+            Debug.WriteLine("Download fileee");
+
+
+            // comando manual para descargar
+
+            // 1 Build package
+            // http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip?cmd=build
+
+            //2 Download
+            //curl -u admin:admin -f -s -S -o /tmp/demo/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip
+            //curl -u admin:admin -f -s -S -o /tmp/demo/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip
+            return result;
+        }
+
+
         private bool ExecuteCurl(String curlCommand)
         {
             bool result = false;
-            // Define el comando curl
-            //string commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
 
-            // Configurar el proceso
             var processStartInfoUploadFile = new ProcessStartInfo("cmd", "/c " + curlCommand)
             {
                 RedirectStandardOutput = true,
@@ -71,7 +86,6 @@ namespace AEM_Push_CRX
                 CreateNoWindow = true
             };
 
-            // Ejecutar el proceso UPLOAD
             using (var process = new Process { StartInfo = processStartInfoUploadFile })
             {
                 process.Start();
@@ -79,17 +93,12 @@ namespace AEM_Push_CRX
                 string error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
+                Debug.WriteLine("Curl Command : " + curlCommand);
+                Debug.WriteLine("Output: " + output);
                 if (output.Contains(Curl.RESULT_OK))
                 {
                     result = true;
                 }
-
-                // Mostrar el resultado o error en la consola de depuración
-                Debug.WriteLine("Output: " + output);
-                Debug.WriteLine("Error: " + error);
-
-                // Mostrar el resultado en un cuadro de mensaje
-                Debug.WriteLine("Comando UPLOAD ejecutado exitosamente:" + output);
             }
             return result;
         }
@@ -115,32 +124,6 @@ namespace AEM_Push_CRX
             **** CURL COMMAND: curl -u admin:admin -f -s -S -o /tmp/repo.0KD/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip 
         */
 
-        public bool downloadFile(String path)
-        {
-            bool result = false;
-            Debug.WriteLine("Download fileee");
-
-
-            // comando manual para descargar
-
-            // 1 Build package
-            // http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip?cmd=build
-
-            //2 Download
-            //curl -u admin:admin -f -s -S -o /tmp/demo/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip
-            //curl -u admin:admin -f -s -S -o /tmp/demo/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723147800.zip
-
-
-
-
-
-
-
-
-
-
-
-            return result;
-        }
+        
     }
 }

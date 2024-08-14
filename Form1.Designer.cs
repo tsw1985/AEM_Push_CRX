@@ -40,6 +40,7 @@
             searchFolderButton = new Button();
             pullTabPage = new TabPage();
             groupBox4 = new GroupBox();
+            pullFromCrxButton = new Button();
             label5 = new Label();
             resultPullFileTextBox = new TextBox();
             searchFileButton = new Button();
@@ -165,6 +166,7 @@
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(pullFromCrxButton);
             groupBox4.Controls.Add(label5);
             groupBox4.Controls.Add(resultPullFileTextBox);
             groupBox4.Controls.Add(searchFileButton);
@@ -176,6 +178,17 @@
             groupBox4.TabIndex = 0;
             groupBox4.TabStop = false;
             groupBox4.Text = "Select file to get it from CRX";
+            // 
+            // pullFromCrxButton
+            // 
+            pullFromCrxButton.Enabled = false;
+            pullFromCrxButton.Location = new Point(652, 59);
+            pullFromCrxButton.Name = "pullFromCrxButton";
+            pullFromCrxButton.Size = new Size(97, 24);
+            pullFromCrxButton.TabIndex = 5;
+            pullFromCrxButton.Text = "Pull file";
+            pullFromCrxButton.UseVisualStyleBackColor = true;
+            pullFromCrxButton.Click += pullFromCrxButton_Click;
             // 
             // label5
             // 
@@ -196,9 +209,9 @@
             // 
             // searchFileButton
             // 
-            searchFileButton.Location = new Point(652, 19);
+            searchFileButton.Location = new Point(652, 24);
             searchFileButton.Name = "searchFileButton";
-            searchFileButton.Size = new Size(97, 32);
+            searchFileButton.Size = new Size(97, 24);
             searchFileButton.TabIndex = 2;
             searchFileButton.Text = "Search file";
             searchFileButton.UseVisualStyleBackColor = true;
@@ -318,5 +331,6 @@
         private OpenFileDialog openFileDialog;
         private Label label5;
         private TextBox resultPullFileTextBox;
+        private Button pullFromCrxButton;
     }
 }
