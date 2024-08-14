@@ -17,6 +17,7 @@ namespace AEM_Push_CRX
     {
         private Curl curl;
         private Dictionary<string, string> fileHashes;
+        private Utils utils;
         FileSystemWatcher watcher;
 
         //Hooking
@@ -46,7 +47,9 @@ namespace AEM_Push_CRX
         public Form1()
         {
             InitializeComponent();
-            curl = new Curl();
+            utils = new Utils();
+            curl = new Curl(utils);
+            
             //initFileWatcher();
             // Initialize the keyboard hook
             InitHooking();
@@ -251,7 +254,7 @@ namespace AEM_Push_CRX
                                        "<entry key=\"group\">tmp/repo</entry>\n" +
                                        "</properties>";
 
-                if (IsADialogXML(relativePath))
+                if (utils.IsADialogXML(relativePath))
                 {
                     propertiesXML = propertiesXML.Replace("${replacePath}", getPathName(relativePath))
                                         .Replace("${randomVersion}", currentTimeStamp)
@@ -309,22 +312,7 @@ namespace AEM_Push_CRX
         }
 
 
-        private bool IsADialogXML(string relativePath)
-        {
-            bool isADialogXML = false;
-
-
-            // Obtener la ruta de la carpeta que contiene el archivo
-            string directoryPath = Path.GetDirectoryName(relativePath);
-
-            // Obtener la carpeta padre
-            string parentFolderName = new DirectoryInfo(directoryPath).Name;
-            if (parentFolderName.Equals("_cq_dialog"))
-            {
-                isADialogXML = true;
-            }
-            return isADialogXML;
-        }
+        
 
         private String getPathName(String path)
         {

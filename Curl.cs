@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Security.Policy;
@@ -13,130 +14,36 @@ namespace AEM_Push_CRX
     internal class Curl
     {
 
-        public Curl() { }
+        public static String RESULT_OK = "\"success\":true";
+        private Utils utils;
+
+        public Curl(Utils utils) { 
+            this.utils = utils;
+        }
 
         public bool uploadFile(String path, String relativePath, String timestamp , String host , String port)
         {
             bool resultUpload = false;
             bool resultInstall = false;
             bool resultDelete = false;
-            String resultOK = "\"success\":true";
-
-            Debug.WriteLine("Uploading file: " + path);
-
+            
             try
             {
-
                 //check if we are uploading a dialog
-                if (relativePath.Contains("_cq_dialog"))
+                if (utils.IsADialogXML(relativePath))
                 {
                     relativePath = relativePath.Replace("_cq_dialog", "cqdialog");
                 }
 
-               // Define el comando curl
+                // Define el comando curl
                 string commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
+                resultUpload = ExecuteCurl(commandUploadZip);
 
-                // Configurar el proceso
-                var processStartInfoUploadFile = new ProcessStartInfo("cmd", "/c " + commandUploadZip)
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-                // Ejecutar el proceso UPLOAD
-                using (var process = new Process { StartInfo = processStartInfoUploadFile })
-                {
-                    process.Start();
-                    string output = process.StandardOutput.ReadToEnd();
-                    string error = process.StandardError.ReadToEnd();
-                    process.WaitForExit();
-
-                    if (output.Contains(resultOK))
-                    {
-                        resultUpload = true;
-                    }
-
-                    // Mostrar el resultado o error en la consola de depuración
-                    Debug.WriteLine("Output: " + output);
-                    Debug.WriteLine("Error: " + error);
-
-                    // Mostrar el resultado en un cuadro de mensaje
-                    Debug.WriteLine("Comando UPLOAD ejecutado exitosamente:" + output);
-                }
-
-                string commandInstallZip = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\","-") + "-" + timestamp + ".zip" + "?cmd=install";
-
-                Debug.WriteLine("COMMANDO : " + commandInstallZip);
-
-                // Configurar el proceso
-                var processStartInfoInstallFile = new ProcessStartInfo("cmd", "/c " + commandInstallZip)
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-
-                using (var processInstall = new Process { StartInfo = processStartInfoInstallFile })
-                {
-                    processInstall.Start();
-                    string output = processInstall.StandardOutput.ReadToEnd();
-                    string error = processInstall.StandardError.ReadToEnd();
-                    processInstall.WaitForExit();
-
-                    if (output.Contains(resultOK))
-                    {
-                        resultInstall = true;
-                    }
-
-                    // Mostrar el resultado o error en la consola de depuración
-                    Debug.WriteLine("INSTALLING - Error Output: " + output);
-                    Debug.WriteLine("INSTALLING - Error: " + error);
-
-                    // Mostrar el resultado en un cuadro de mensaje
-                    Debug.WriteLine("Comando INSTALL ejecutado exitosamente:\n" + output);
-                }
-
-
-                //DELETE PACKAGE
+                string commandInstallZip = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=install";
+                resultInstall = ExecuteCurl(commandInstallZip);
 
                 string commandDeleteZip = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=delete";
-
-                Debug.WriteLine("COMMANDO DELETE: " + commandDeleteZip);
-
-                // Configurar el proceso
-                var processStartInfoDeleteFile = new ProcessStartInfo("cmd", "/c " + commandDeleteZip)
-                {
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-
-                using (var processDelete = new Process { StartInfo = processStartInfoDeleteFile })
-                {
-                    processDelete.Start();
-                    string output = processDelete.StandardOutput.ReadToEnd();
-                    string error = processDelete.StandardError.ReadToEnd();
-                    processDelete.WaitForExit();
-
-
-                    if (output.Contains(resultOK))
-                    {
-                        resultDelete  = true;
-                    }
-
-                    // Mostrar el resultado o error en la consola de depuración
-                    Debug.WriteLine("DELETING - Error Output: " + output);
-                    Debug.WriteLine("DELETING - Error: " + error);
-
-                    // Mostrar el resultado en un cuadro de mensaje
-                    Debug.WriteLine("Comando DELETE ejecutado exitosamente:\n" + output);
-                }
+                resultDelete = ExecuteCurl(commandDeleteZip);
 
             }
             catch (Exception ex)
@@ -145,7 +52,53 @@ namespace AEM_Push_CRX
                 MessageBox.Show("Ocurrió un error al ejecutar el comando INSTALL:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return resultInstall && resultDelete && resultUpload;
+
         }
+
+
+        private bool ExecuteCurl(String curlCommand)
+        {
+            bool result = false;
+            // Define el comando curl
+            //string commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
+
+            // Configurar el proceso
+            var processStartInfoUploadFile = new ProcessStartInfo("cmd", "/c " + curlCommand)
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            // Ejecutar el proceso UPLOAD
+            using (var process = new Process { StartInfo = processStartInfoUploadFile })
+            {
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                if (output.Contains(Curl.RESULT_OK))
+                {
+                    result = true;
+                }
+
+                // Mostrar el resultado o error en la consola de depuración
+                Debug.WriteLine("Output: " + output);
+                Debug.WriteLine("Error: " + error);
+
+                // Mostrar el resultado en un cuadro de mensaje
+                Debug.WriteLine("Comando UPLOAD ejecutado exitosamente:" + output);
+            }
+            return result;
+        }
+
+
+
+
+
+
 
         /*
             /home/gabriel/DEVELOPER/code/JAVA/tools-repo-1.4/repo/repo get -f /home/gabriel/DEVELOPER/code/JAVA/icex-portalelena/ui.apps/src/main/content/jcr_root/apps/icex-elena/components/content/comunity/.content.xml
