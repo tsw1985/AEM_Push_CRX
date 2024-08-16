@@ -262,7 +262,7 @@
             // 
             // portTextBox
             // 
-            portTextBox.Location = new Point(287, 21);
+            portTextBox.Location = new Point(287, 20);
             portTextBox.Name = "portTextBox";
             portTextBox.Size = new Size(38, 23);
             portTextBox.TabIndex = 6;
@@ -271,7 +271,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(253, 23);
+            label3.Location = new Point(252, 23);
             label3.Name = "label3";
             label3.Size = new Size(32, 15);
             label3.TabIndex = 5;
@@ -279,7 +279,7 @@
             // 
             // hostTextBox
             // 
-            hostTextBox.Location = new Point(47, 20);
+            hostTextBox.Location = new Point(46, 20);
             hostTextBox.Name = "hostTextBox";
             hostTextBox.Size = new Size(200, 23);
             hostTextBox.TabIndex = 4;
@@ -288,7 +288,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(7, 23);
+            label2.Location = new Point(8, 23);
             label2.Name = "label2";
             label2.Size = new Size(35, 15);
             label2.TabIndex = 3;
@@ -313,9 +313,9 @@
             // 
             // adminPasswordTextBox
             // 
-            adminPasswordTextBox.Location = new Point(614, 22);
+            adminPasswordTextBox.Location = new Point(626, 20);
             adminPasswordTextBox.Name = "adminPasswordTextBox";
-            adminPasswordTextBox.Size = new Size(100, 23);
+            adminPasswordTextBox.Size = new Size(136, 23);
             adminPasswordTextBox.TabIndex = 10;
             adminPasswordTextBox.Text = "admin";
             adminPasswordTextBox.TextChanged += textBox2_TextChanged;
@@ -323,15 +323,15 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(553, 26);
+            label7.Location = new Point(563, 23);
             label7.Name = "label7";
-            label7.Size = new Size(57, 15);
+            label7.Size = new Size(60, 15);
             label7.TabIndex = 9;
-            label7.Text = "Password";
+            label7.Text = "Password:";
             // 
             // adminUserTextBox
             // 
-            adminUserTextBox.Location = new Point(404, 22);
+            adminUserTextBox.Location = new Point(404, 20);
             adminUserTextBox.Name = "adminUserTextBox";
             adminUserTextBox.Size = new Size(139, 23);
             adminUserTextBox.TabIndex = 8;
@@ -340,11 +340,11 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(336, 24);
+            label6.Location = new Point(338, 23);
             label6.Name = "label6";
-            label6.Size = new Size(60, 15);
+            label6.Size = new Size(63, 15);
             label6.TabIndex = 7;
-            label6.Text = "Username";
+            label6.Text = "Username:";
             // 
             // openFileDialog
             // 

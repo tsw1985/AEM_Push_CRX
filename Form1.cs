@@ -15,6 +15,14 @@ namespace AEM_Push_CRX
 {
     public partial class Form1 : Form
     {
+
+
+        // TODO: Check to upload css files
+        // TODO: Improve UI
+        // TODO: Pull info while pull is working 
+        // TODO: Improve code
+
+
         private Curl curl;
         private Dictionary<string, string> fileHashes;
         private Utils utils;
@@ -65,11 +73,13 @@ namespace AEM_Push_CRX
         // Métodos de manejo de eventos para FileSystemWatcher
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-            System.Threading.Thread.Sleep(200); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
+            System.Threading.Thread.Sleep(500); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
                 String filePath = e.FullPath;
-                if (filePath.EndsWith(".html") || filePath.EndsWith(".xml") || filePath.EndsWith(".js"))
+                if (filePath.EndsWith(".html") || filePath.EndsWith(".xml") || 
+                    filePath.EndsWith(".js") || filePath.EndsWith(".css") ||
+                        filePath.EndsWith(".less"))
                 {
                     // Verificar si el contenido del archivo ha cambiado
                     if (FileHasChanged(filePath))
@@ -251,7 +261,6 @@ namespace AEM_Push_CRX
                 // Estamos en el hilo de la UI, podemos actualizar el TextBox directamente
                 filesChangedLoggerTextBox.AppendText(text);
                 filesChangedLoggerTextBox.AppendText(Environment.NewLine);
-
             }
         }
 
@@ -325,9 +334,16 @@ namespace AEM_Push_CRX
         {
             if (!pathPullFileTextBox.Text.Equals("") && !folderZipFileTextBox.Text.Equals(""))
             {
+
+                resultLabel.Text = "Creating package ... Please wait";
+
                 if (PullFile(pathPullFileTextBox.Text, DESTINATION_DIRECTORY)) //DESTINATION_DIRECTORY
                 {
-                    resultLabel.Text = "Package downloaded in : " + folderZipFileTextBox.Text + "\\pkg.zip";
+                    resultLabel.Text = "Package created in : " + folderZipFileTextBox.Text + "\\pkg.zip";
+                }
+                else
+                {
+                    resultLabel.Text = "[ERROR] Creating package :(";
                 }
             }
 
