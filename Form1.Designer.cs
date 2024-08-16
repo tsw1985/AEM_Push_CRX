@@ -51,11 +51,15 @@
             hostTextBox = new TextBox();
             label2 = new Label();
             groupBox3 = new GroupBox();
-            openFileDialog = new OpenFileDialog();
-            label6 = new Label();
-            textBox1 = new TextBox();
-            label7 = new Label();
             textBox2 = new TextBox();
+            label7 = new Label();
+            textBox1 = new TextBox();
+            label6 = new Label();
+            openFileDialog = new OpenFileDialog();
+            label8 = new Label();
+            button2 = new Button();
+            folderZipFileTextBox = new TextBox();
+            saveZipFileFolderBrowserDialog = new FolderBrowserDialog();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
             pushTabPage.SuspendLayout();
@@ -170,6 +174,9 @@
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(folderZipFileTextBox);
+            groupBox4.Controls.Add(button2);
+            groupBox4.Controls.Add(label8);
             groupBox4.Controls.Add(pullFromCrxButton);
             groupBox4.Controls.Add(label5);
             groupBox4.Controls.Add(resultPullFileTextBox);
@@ -186,9 +193,9 @@
             // pullFromCrxButton
             // 
             pullFromCrxButton.Enabled = false;
-            pullFromCrxButton.Location = new Point(652, 59);
+            pullFromCrxButton.Location = new Point(81, 88);
             pullFromCrxButton.Name = "pullFromCrxButton";
-            pullFromCrxButton.Size = new Size(97, 24);
+            pullFromCrxButton.Size = new Size(565, 24);
             pullFromCrxButton.TabIndex = 5;
             pullFromCrxButton.Text = "Pull file";
             pullFromCrxButton.UseVisualStyleBackColor = true;
@@ -197,7 +204,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(10, 65);
+            label5.Location = new Point(36, 126);
             label5.Name = "label5";
             label5.RightToLeft = RightToLeft.Yes;
             label5.Size = new Size(39, 15);
@@ -206,9 +213,9 @@
             // 
             // resultPullFileTextBox
             // 
-            resultPullFileTextBox.Location = new Point(54, 60);
+            resultPullFileTextBox.Location = new Point(81, 118);
             resultPullFileTextBox.Name = "resultPullFileTextBox";
-            resultPullFileTextBox.Size = new Size(592, 23);
+            resultPullFileTextBox.Size = new Size(565, 23);
             resultPullFileTextBox.TabIndex = 3;
             // 
             // searchFileButton
@@ -223,15 +230,15 @@
             // 
             // pathPullFileTextBox
             // 
-            pathPullFileTextBox.Location = new Point(54, 24);
+            pathPullFileTextBox.Location = new Point(81, 28);
             pathPullFileTextBox.Name = "pathPullFileTextBox";
-            pathPullFileTextBox.Size = new Size(592, 23);
+            pathPullFileTextBox.Size = new Size(565, 23);
             pathPullFileTextBox.TabIndex = 1;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(10, 28);
+            label4.Location = new Point(46, 36);
             label4.Name = "label4";
             label4.Size = new Size(25, 15);
             label4.TabIndex = 0;
@@ -288,25 +295,13 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "AEM Instance config";
             // 
-            // openFileDialog
+            // textBox2
             // 
-            openFileDialog.FileName = "filePath";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(338, 26);
-            label6.Name = "label6";
-            label6.Size = new Size(60, 15);
-            label6.TabIndex = 7;
-            label6.Text = "Username";
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(404, 23);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(139, 23);
-            textBox1.TabIndex = 8;
+            textBox2.Location = new Point(614, 23);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(100, 23);
+            textBox2.TabIndex = 10;
+            textBox2.TextChanged += textBox2_TextChanged;
             // 
             // label7
             // 
@@ -317,13 +312,51 @@
             label7.TabIndex = 9;
             label7.Text = "Password";
             // 
-            // textBox2
+            // textBox1
             // 
-            textBox2.Location = new Point(614, 23);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(100, 23);
-            textBox2.TabIndex = 10;
-            textBox2.TextChanged += textBox2_TextChanged;
+            textBox1.Location = new Point(404, 23);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(139, 23);
+            textBox1.TabIndex = 8;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(338, 26);
+            label6.Name = "label6";
+            label6.Size = new Size(60, 15);
+            label6.TabIndex = 7;
+            label6.Text = "Username";
+            // 
+            // openFileDialog
+            // 
+            openFileDialog.FileName = "filePath";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(9, 59);
+            label8.Name = "label8";
+            label8.Size = new Size(66, 15);
+            label8.TabIndex = 6;
+            label8.Text = "Save file in:";
+            // 
+            // button2
+            // 
+            button2.Location = new Point(652, 59);
+            button2.Name = "button2";
+            button2.Size = new Size(97, 23);
+            button2.TabIndex = 7;
+            button2.Text = "Set folder";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += open_folder_to_save_zip_button_Click;
+            // 
+            // folderZipFileTextBox
+            // 
+            folderZipFileTextBox.Location = new Point(81, 55);
+            folderZipFileTextBox.Name = "folderZipFileTextBox";
+            folderZipFileTextBox.Size = new Size(565, 23);
+            folderZipFileTextBox.TabIndex = 8;
             // 
             // Form1
             // 
@@ -377,5 +410,9 @@
         private Label label7;
         private TextBox textBox1;
         private Label label6;
+        private Button button2;
+        private Label label8;
+        private TextBox folderZipFileTextBox;
+        private FolderBrowserDialog saveZipFileFolderBrowserDialog;
     }
 }

@@ -347,7 +347,7 @@ namespace AEM_Push_CRX
                 if (!relativePath.Equals(""))
                 {
 
-                    curl.downloadFile(FOLDER_ZIPPED_FILE, hostTextBox.Text, portTextBox.Text, timeStamp , relativePath);
+                    curl.downloadFile(FOLDER_ZIPPED_FILE, hostTextBox.Text, portTextBox.Text, timeStamp, relativePath);
                     //MessageBox.Show("ZIP PULL CREATED !!");
 
                 }
@@ -369,6 +369,14 @@ namespace AEM_Push_CRX
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void open_folder_to_save_zip_button_Click(object sender, EventArgs e)
+        {
+            if (saveZipFileFolderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                folderZipFileTextBox.Text = saveZipFileFolderBrowserDialog.SelectedPath;
+            }
         }
     }
 }

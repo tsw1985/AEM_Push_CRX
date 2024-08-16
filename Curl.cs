@@ -73,6 +73,7 @@ namespace AEM_Push_CRX
             resultBuild = ExecuteCurl(commandBuildPackage);
 
             //3 Download zip , extract it and put file on the same path
+            // curl -u admin:admin -f -s -S -o /tmp/pkggggg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-comunity.html-1723802917.zip
 
 
             return resultUpload;
