@@ -53,9 +53,9 @@
             hostTextBox = new TextBox();
             label2 = new Label();
             groupBox3 = new GroupBox();
-            textBox2 = new TextBox();
+            adminPasswordTextBox = new TextBox();
             label7 = new Label();
-            textBox1 = new TextBox();
+            adminUserTextBox = new TextBox();
             label6 = new Label();
             openFileDialog = new OpenFileDialog();
             saveZipFileFolderBrowserDialog = new FolderBrowserDialog();
@@ -296,9 +296,9 @@
             // 
             // groupBox3
             // 
-            groupBox3.Controls.Add(textBox2);
+            groupBox3.Controls.Add(adminPasswordTextBox);
             groupBox3.Controls.Add(label7);
-            groupBox3.Controls.Add(textBox1);
+            groupBox3.Controls.Add(adminUserTextBox);
             groupBox3.Controls.Add(label6);
             groupBox3.Controls.Add(portTextBox);
             groupBox3.Controls.Add(label2);
@@ -311,34 +311,36 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "AEM Instance config";
             // 
-            // textBox2
+            // adminPasswordTextBox
             // 
-            textBox2.Location = new Point(614, 23);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(100, 23);
-            textBox2.TabIndex = 10;
-            textBox2.TextChanged += textBox2_TextChanged;
+            adminPasswordTextBox.Location = new Point(614, 22);
+            adminPasswordTextBox.Name = "adminPasswordTextBox";
+            adminPasswordTextBox.Size = new Size(100, 23);
+            adminPasswordTextBox.TabIndex = 10;
+            adminPasswordTextBox.Text = "admin";
+            adminPasswordTextBox.TextChanged += textBox2_TextChanged;
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(553, 27);
+            label7.Location = new Point(553, 26);
             label7.Name = "label7";
             label7.Size = new Size(57, 15);
             label7.TabIndex = 9;
             label7.Text = "Password";
             // 
-            // textBox1
+            // adminUserTextBox
             // 
-            textBox1.Location = new Point(404, 23);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(139, 23);
-            textBox1.TabIndex = 8;
+            adminUserTextBox.Location = new Point(404, 22);
+            adminUserTextBox.Name = "adminUserTextBox";
+            adminUserTextBox.Size = new Size(139, 23);
+            adminUserTextBox.TabIndex = 8;
+            adminUserTextBox.Text = "admin";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(338, 26);
+            label6.Location = new Point(336, 24);
             label6.Name = "label6";
             label6.Size = new Size(60, 15);
             label6.TabIndex = 7;
@@ -356,7 +358,7 @@
             Controls.Add(groupBox3);
             Controls.Add(tabControl1);
             Name = "Form1";
-            Text = "Form1";
+            Text = "G85 - CRX Auto Save and download 1.0";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             tabControl1.ResumeLayout(false);
@@ -395,9 +397,9 @@
         private OpenFileDialog openFileDialog;
         private Label resultLabel;
         private Button pullFromCrxButton;
-        private TextBox textBox2;
+        private TextBox adminPasswordTextBox;
         private Label label7;
-        private TextBox textBox1;
+        private TextBox adminUserTextBox;
         private Label label6;
         private Button button2;
         private Label label8;

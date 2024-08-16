@@ -26,7 +26,7 @@ namespace AEM_Push_CRX
         {
             InitializeComponent();
             utils = new Utils();
-            curl = new Curl(utils);
+            curl = new Curl(utils,adminUserTextBox.Text , adminPasswordTextBox.Text);
         }
 
         // Inicializar FileSystemWatcher
@@ -327,7 +327,7 @@ namespace AEM_Push_CRX
             {
                 if (PullFile(pathPullFileTextBox.Text, DESTINATION_DIRECTORY)) //DESTINATION_DIRECTORY
                 {
-                    resultLabel.Text = "Package done on : " + folderZipFileTextBox.Text + "\\pkg.zip";
+                    resultLabel.Text = "Package downloaded in : " + folderZipFileTextBox.Text + "\\pkg.zip";
                 }
             }
 

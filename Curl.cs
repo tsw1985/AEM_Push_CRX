@@ -16,9 +16,15 @@ namespace AEM_Push_CRX
 
         public static String RESULT_OK = "\"success\":true";
         private Utils utils;
+        private String userName;
+        private String password;
+        private String curlHeadCommand;
 
-        public Curl(Utils utils) { 
+        public Curl(Utils utils , String userName , String password) { 
             this.utils = utils;
+            this.userName = userName;
+            this.password = password;
+            this.curlHeadCommand = "curl -u " + userName  + ":" + password + " ";
         }
 
         public bool uploadFile(String path, String relativePath, String timestamp , String host , String port)
@@ -36,13 +42,13 @@ namespace AEM_Push_CRX
                 }
 
                 // Define el comando curl
-                string commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
+                string commandUploadZip = curlHeadCommand      + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
                 resultUpload = ExecuteCurl(commandUploadZip);
 
-                string commandInstallZip = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=install";
+                string commandInstallZip = curlHeadCommand     + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=install";
                 resultInstall = ExecuteCurl(commandInstallZip);
 
-                string commandDeleteZip = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=delete";
+                string commandDeleteZip = curlHeadCommand      + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=delete";
                 resultDelete = ExecuteCurl(commandDeleteZip);
 
             }
@@ -65,25 +71,23 @@ namespace AEM_Push_CRX
             Debug.WriteLine("Download fileee");
 
             //1 Upload package
-            String commandUploadZip = "curl -u admin:admin -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
+            String commandUploadZip = curlHeadCommand + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
             resultUpload = ExecuteCurl(commandUploadZip);
 
             System.Threading.Thread.Sleep(1000);
 
             //2 build package
-            string commandBuildPackage = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath  + "-" + timeStamp + ".zip" + "?cmd=build";
+            string commandBuildPackage = curlHeadCommand + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath  + "-" + timeStamp + ".zip" + "?cmd=build";
             resultBuild = ExecuteCurl(commandBuildPackage);
 
             //3 Download zip , extract it and put file on the same path
             // Linux
             // curl -u admin:admin -f -s -S -o /tmp/pkggggg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-comunity.html-1723802917.zip
-
-
             System.Threading.Thread.Sleep(1000);
 
             // Windows
             // curl -u admin:admin -f -s -S -o "c:\AEM\fichero.zip" http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1723802698.zip
-            string commanDownloadPackage = "curl -u admin:admin -f -s -S -o \"" + destinationFolder + "\\pkg.zip\"" + " http://" + host +  ":" + port + "/etc/packages/tmp/repo/" + relativePath + "-" + timeStamp + ".zip";
+            string commanDownloadPackage = curlHeadCommand + " -f -s -S -o \"" + destinationFolder + "\\pkg.zip\"" + " http://" + host +  ":" + port + "/etc/packages/tmp/repo/" + relativePath + "-" + timeStamp + ".zip";
             resultDownload = ExecuteCurl(commanDownloadPackage);
 
 
@@ -119,28 +123,5 @@ namespace AEM_Push_CRX
             }
             return result;
         }
-
-
-
-
-
-
-
-        /*
-            /home/gabriel/DEVELOPER/code/JAVA/tools-repo-1.4/repo/repo get -f /home/gabriel/DEVELOPER/code/JAVA/icex-portalelena/ui.apps/src/main/content/jcr_root/apps/icex-elena/components/content/comunity/.content.xml
-            downloading /apps/icex-elena/components/content/comunity/.content.xml from http://192.168.1.196:4502
-            TEMP FOLDER ==> /tmp/repo.0KD
-            EXCLUDES ===> /tmp/repo.0KD/.excludes
-            parametro 2:  -F package =@/tmp/repo.0KD/pkg.zip -F force = true http://192.168.1.196:4502/crx/packmgr/service/.json?cmd=upload
-            **** CURL COMMAND: curl -u admin:admin -f -s -S -F package =@/tmp/repo.0KD/pkg.zip -F force = true http://192.168.1.196:4502/crx/packmgr/service/.json?cmd=upload 
-            parametro 2:  -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip?cmd=build
-            **** CURL COMMAND: curl -u admin:admin -f -s -S -X POST http://192.168.1.196:4502/crx/packmgr/service/.json/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip?cmd=build 
-            DOWNLOAD PACKAGE pkg : tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip
-            DOWNLOAD PACKAGE /tmp/repo.0KD/pkg.zip : /tmp/repo.0KD/pkg.zip
-            download_pkg_funtion params : -o /tmp/repo.0KD/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip
-            **** CURL COMMAND: curl -u admin:admin -f -s -S -o /tmp/repo.0KD/pkg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-.content.xml-1723558257.zip 
-        */
-
-        
     }
 }
