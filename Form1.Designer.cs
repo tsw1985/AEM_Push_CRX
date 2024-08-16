@@ -131,7 +131,7 @@
             groupBox2.Size = new Size(756, 56);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
-            groupBox2.Text = "App Folder";
+            groupBox2.Text = "App Folder to listen files";
             // 
             // appFoldertextBox
             // 
