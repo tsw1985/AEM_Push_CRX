@@ -323,11 +323,11 @@ namespace AEM_Push_CRX
 
         private void pullFromCrxButton_Click(object sender, EventArgs e)
         {
-            if (!pathPullFileTextBox.Text.Equals(""))
+            if (!pathPullFileTextBox.Text.Equals("") && !folderZipFileTextBox.Text.Equals(""))
             {
-                if (PullFile(pathPullFileTextBox.Text, DESTINATION_DIRECTORY))
+                if (PullFile(pathPullFileTextBox.Text, DESTINATION_DIRECTORY)) //DESTINATION_DIRECTORY
                 {
-                    resultPullFileTextBox.Text = "Success : File downloaded";
+                    resultLabel.Text = "Package done on : " + folderZipFileTextBox.Text + "\\pkg.zip";
                 }
             }
 
@@ -341,21 +341,13 @@ namespace AEM_Push_CRX
             {
 
                 String timeStamp = utils.GetCurrentDateTimeStamp();
-
                 String relativePath = utils.CreateEmtpyZipPkg(path, destinationRootPath, timeStamp);
 
                 if (!relativePath.Equals(""))
                 {
-
-                    curl.downloadFile(FOLDER_ZIPPED_FILE, hostTextBox.Text, portTextBox.Text, timeStamp, relativePath);
-                    //MessageBox.Show("ZIP PULL CREATED !!");
-
+                    created = curl.downloadFile(FOLDER_ZIPPED_FILE, hostTextBox.Text, portTextBox.Text, timeStamp, relativePath, folderZipFileTextBox.Text);
                 }
 
-
-
-
-                //MessageBox.Show("PULL!");
             }
             catch (Exception ex)
             {

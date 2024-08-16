@@ -56,10 +56,12 @@ namespace AEM_Push_CRX
         }
 
 
-        public bool downloadFile(String path , String host, String port , String timeStamp , String relativePath)
+        public bool downloadFile(String path , String host, String port , String timeStamp , String relativePath, String destinationFolder)
         {
             bool resultUpload = false;
             bool resultBuild = false;
+            bool resultDownload = false;
+
             Debug.WriteLine("Download fileee");
 
             //1 Upload package
@@ -69,14 +71,23 @@ namespace AEM_Push_CRX
             System.Threading.Thread.Sleep(1000);
 
             //2 build package
-            string commandBuildPackage = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath                                           + "-" + timeStamp + ".zip" + "?cmd=build";
+            string commandBuildPackage = "curl -u admin:admin -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath  + "-" + timeStamp + ".zip" + "?cmd=build";
             resultBuild = ExecuteCurl(commandBuildPackage);
 
             //3 Download zip , extract it and put file on the same path
+            // Linux
             // curl -u admin:admin -f -s -S -o /tmp/pkggggg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-comunity.html-1723802917.zip
 
 
-            return resultUpload;
+            System.Threading.Thread.Sleep(1000);
+
+            // Windows
+            // curl -u admin:admin -f -s -S -o "c:\AEM\fichero.zip" http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1723802698.zip
+            string commanDownloadPackage = "curl -u admin:admin -f -s -S -o \"" + destinationFolder + "\\pkg.zip\"" + " http://" + host +  ":" + port + "/etc/packages/tmp/repo/" + relativePath + "-" + timeStamp + ".zip";
+            resultDownload = ExecuteCurl(commanDownloadPackage);
+
+
+            return resultUpload && resultBuild;
         }
 
 

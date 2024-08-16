@@ -40,9 +40,11 @@
             searchFolderButton = new Button();
             pullTabPage = new TabPage();
             groupBox4 = new GroupBox();
+            folderZipFileTextBox = new TextBox();
+            button2 = new Button();
+            label8 = new Label();
             pullFromCrxButton = new Button();
-            label5 = new Label();
-            resultPullFileTextBox = new TextBox();
+            resultLabel = new Label();
             searchFileButton = new Button();
             pathPullFileTextBox = new TextBox();
             label4 = new Label();
@@ -56,9 +58,6 @@
             textBox1 = new TextBox();
             label6 = new Label();
             openFileDialog = new OpenFileDialog();
-            label8 = new Label();
-            button2 = new Button();
-            folderZipFileTextBox = new TextBox();
             saveZipFileFolderBrowserDialog = new FolderBrowserDialog();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -178,8 +177,7 @@
             groupBox4.Controls.Add(button2);
             groupBox4.Controls.Add(label8);
             groupBox4.Controls.Add(pullFromCrxButton);
-            groupBox4.Controls.Add(label5);
-            groupBox4.Controls.Add(resultPullFileTextBox);
+            groupBox4.Controls.Add(resultLabel);
             groupBox4.Controls.Add(searchFileButton);
             groupBox4.Controls.Add(pathPullFileTextBox);
             groupBox4.Controls.Add(label4);
@@ -190,37 +188,55 @@
             groupBox4.TabStop = false;
             groupBox4.Text = "Select file to get it from CRX";
             // 
+            // folderZipFileTextBox
+            // 
+            folderZipFileTextBox.Location = new Point(81, 55);
+            folderZipFileTextBox.Name = "folderZipFileTextBox";
+            folderZipFileTextBox.Size = new Size(565, 23);
+            folderZipFileTextBox.TabIndex = 8;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(650, 56);
+            button2.Name = "button2";
+            button2.Size = new Size(97, 23);
+            button2.TabIndex = 7;
+            button2.Text = "Set folder";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += open_folder_to_save_zip_button_Click;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(9, 59);
+            label8.Name = "label8";
+            label8.Size = new Size(66, 15);
+            label8.TabIndex = 6;
+            label8.Text = "Save file in:";
+            // 
             // pullFromCrxButton
             // 
             pullFromCrxButton.Enabled = false;
-            pullFromCrxButton.Location = new Point(81, 88);
+            pullFromCrxButton.Location = new Point(80, 83);
             pullFromCrxButton.Name = "pullFromCrxButton";
-            pullFromCrxButton.Size = new Size(565, 24);
+            pullFromCrxButton.Size = new Size(566, 24);
             pullFromCrxButton.TabIndex = 5;
             pullFromCrxButton.Text = "Pull file";
             pullFromCrxButton.UseVisualStyleBackColor = true;
             pullFromCrxButton.Click += pullFromCrxButton_Click;
             // 
-            // label5
+            // resultLabel
             // 
-            label5.AutoSize = true;
-            label5.Location = new Point(36, 126);
-            label5.Name = "label5";
-            label5.RightToLeft = RightToLeft.Yes;
-            label5.Size = new Size(39, 15);
-            label5.TabIndex = 4;
-            label5.Text = "Result";
-            // 
-            // resultPullFileTextBox
-            // 
-            resultPullFileTextBox.Location = new Point(81, 118);
-            resultPullFileTextBox.Name = "resultPullFileTextBox";
-            resultPullFileTextBox.Size = new Size(565, 23);
-            resultPullFileTextBox.TabIndex = 3;
+            resultLabel.AutoSize = true;
+            resultLabel.Location = new Point(81, 114);
+            resultLabel.Name = "resultLabel";
+            resultLabel.RightToLeft = RightToLeft.Yes;
+            resultLabel.Size = new Size(0, 15);
+            resultLabel.TabIndex = 4;
             // 
             // searchFileButton
             // 
-            searchFileButton.Location = new Point(652, 24);
+            searchFileButton.Location = new Point(650, 27);
             searchFileButton.Name = "searchFileButton";
             searchFileButton.Size = new Size(97, 24);
             searchFileButton.TabIndex = 2;
@@ -267,7 +283,7 @@
             hostTextBox.Name = "hostTextBox";
             hostTextBox.Size = new Size(200, 23);
             hostTextBox.TabIndex = 4;
-            hostTextBox.Text = "192.168.1.196";
+            hostTextBox.Text = "localhost";
             // 
             // label2
             // 
@@ -332,32 +348,6 @@
             // 
             openFileDialog.FileName = "filePath";
             // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(9, 59);
-            label8.Name = "label8";
-            label8.Size = new Size(66, 15);
-            label8.TabIndex = 6;
-            label8.Text = "Save file in:";
-            // 
-            // button2
-            // 
-            button2.Location = new Point(652, 59);
-            button2.Name = "button2";
-            button2.Size = new Size(97, 23);
-            button2.TabIndex = 7;
-            button2.Text = "Set folder";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += open_folder_to_save_zip_button_Click;
-            // 
-            // folderZipFileTextBox
-            // 
-            folderZipFileTextBox.Location = new Point(81, 55);
-            folderZipFileTextBox.Name = "folderZipFileTextBox";
-            folderZipFileTextBox.Size = new Size(565, 23);
-            folderZipFileTextBox.TabIndex = 8;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -403,8 +393,7 @@
         private TextBox pathPullFileTextBox;
         private Label label4;
         private OpenFileDialog openFileDialog;
-        private Label label5;
-        private TextBox resultPullFileTextBox;
+        private Label resultLabel;
         private Button pullFromCrxButton;
         private TextBox textBox2;
         private Label label7;
