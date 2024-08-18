@@ -35,13 +35,11 @@ namespace AEM_Push_CRX
             
             try
             {
-                //check if we are uploading a dialog
                 if (utils.IsADialogXML(relativePath))
                 {
                     relativePath = relativePath.Replace("_cq_dialog", "cqdialog");
                 }
 
-                // Define el comando curl
                 string commandUploadZip = curlHeadCommand      + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
                 resultUpload = ExecuteCurl(commandUploadZip);
 
@@ -70,26 +68,18 @@ namespace AEM_Push_CRX
 
             Debug.WriteLine("Download fileee");
 
-            //1 Upload package
             String commandUploadZip = curlHeadCommand + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
             resultUpload = ExecuteCurl(commandUploadZip);
 
             System.Threading.Thread.Sleep(1000);
 
-            //2 build package
             string commandBuildPackage = curlHeadCommand + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath  + "-" + timeStamp + ".zip" + "?cmd=build";
             resultBuild = ExecuteCurl(commandBuildPackage);
 
-            //3 Download zip , extract it and put file on the same path
-            // Linux
-            // curl -u admin:admin -f -s -S -o /tmp/pkggggg.zip http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-comunity-comunity.html-1723802917.zip
             System.Threading.Thread.Sleep(1000);
 
-            // Windows
-            // curl -u admin:admin -f -s -S -o "c:\AEM\fichero.zip" http://192.168.1.196:4502/etc/packages/tmp/repo/repo-apps-icex-elena-components-content-breadcrumb-breadcrumb.html-1723802698.zip
             string commanDownloadPackage = curlHeadCommand + " -f -s -S -o \"" + destinationFolder + "\\pkg.zip\"" + " http://" + host +  ":" + port + "/etc/packages/tmp/repo/" + relativePath + "-" + timeStamp + ".zip";
             resultDownload = ExecuteCurl(commanDownloadPackage);
-
 
             return resultUpload && resultBuild;
         }

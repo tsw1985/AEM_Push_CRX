@@ -91,7 +91,6 @@ namespace AEM_Push_CRX
             try
             {
                 string sourceFile = path;
-                //string destinationDirectory = @"C:\windows\temp\aemtemp";
                 created = CreatePkgZip(sourceFile, DESTINATION_DIRECTORY);
             }
             catch (Exception ex)
@@ -149,12 +148,10 @@ namespace AEM_Push_CRX
         {
             if (filesChangedLoggerTextBox.InvokeRequired)
             {
-                // Si estamos en un hilo diferente, usar Invoke para llamar a este método en el hilo de la UI
                 filesChangedLoggerTextBox.Invoke(new Action<string>(UpdateTextBox), text);
             }
             else
             {
-                // Estamos en el hilo de la UI, podemos actualizar el TextBox directamente
                 filesChangedLoggerTextBox.AppendText(text);
                 filesChangedLoggerTextBox.AppendText(Environment.NewLine);
             }
@@ -162,6 +159,7 @@ namespace AEM_Push_CRX
 
         private bool FileHasChanged(string filePath)
         {
+            bool fileChanged = true;
             try
             {
                 string newHash = ComputeFileHash(filePath);
@@ -170,20 +168,20 @@ namespace AEM_Push_CRX
                 {
                     if (newHash == oldHash)
                     {
-                        // El contenido no ha cambiado
-                        return false;
+                        fileChanged = false;
                     }
                 }
 
-                // Actualizar el hash almacenado
                 fileHashes[filePath] = newHash;
-                return true;
+
             }
             catch (IOException)
             {
-                // Manejar archivos que puedan estar siendo utilizados por otros procesos
-                return false;
+
             }
+
+            // Estamos en el hilo de la UI, podemos actualizar el TextBox directamente
+            return fileChanged;
         }
 
         private string ComputeFileHash(string filePath)

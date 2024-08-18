@@ -14,8 +14,6 @@ namespace AEM_Push_CRX
         public bool IsADialogXML(string relativePath)
         {
             bool isADialogXML = false;
-
-
             // Obtener la ruta de la carpeta que contiene el archivo
             string directoryPath = Path.GetDirectoryName(relativePath);
 
@@ -53,22 +51,11 @@ namespace AEM_Push_CRX
 
             try
             {
-                
                 string onlyFromAppsFolder = sourceFile.Split("jcr_root")[1];
-
-                // Obtener el directorio raíz de la ruta de origen
                 string sourceRoot = Path.GetPathRoot(sourceFile);
-                Debug.WriteLine("SOURCE ROOT: " + sourceRoot);
-
-                // Construir la ruta completa en el destino
                 string destinationFile = destinationRoot + "\\jcr_root\\";
-                Debug.WriteLine("DESTINATION PATH: " + destinationFile);
-
-                // Obtener el directorio de destino
                 string destinationDirectory = Path.GetDirectoryName(destinationFile);
-                Debug.WriteLine("DESTINATION DIRECTORY: " + destinationDirectory);
 
-                // Crear los directorios necesarios en el destino
                 if (!Directory.Exists(destinationDirectory))
                 {
                     Directory.CreateDirectory(destinationDirectory);
@@ -81,10 +68,7 @@ namespace AEM_Push_CRX
                 basicFolderCreaded = false;
                 Debug.WriteLine("Problem creating basic folders " + e);
             }
-            
-
             return basicFolderCreaded;
-
         }
 
 
@@ -94,18 +78,9 @@ namespace AEM_Push_CRX
 
             try
             {
-                // *************************** Copy html file *****************************
                 string onlyFromAppsFolder = sourceFile.Split("jcr_root")[1];
-
-                // Obtener el directorio raíz de la ruta de origen
                 string sourceRoot = Path.GetPathRoot(sourceFile);
-                Debug.WriteLine("SOURCE ROOT: " + sourceRoot);
-
-                 // Obtener la ruta relativa del archivo desde el directorio raíz de origen
-                //string relativePath = Path.GetRelativePath(sourceRoot, sourceFile);
                 string relativePath = onlyFromAppsFolder;// Path.GetRelativePath(onlyFromAppsFolder, sourceFile);
-                Debug.WriteLine("RELATIVE PATH: " + relativePath);
-
                 string destinationFile = "";
                 if (addRelativePath)
                 {
@@ -115,15 +90,8 @@ namespace AEM_Push_CRX
                 {
                     destinationFile = destinationRoot + "\\jcr_root\\";
                 }
-                // Construir la ruta completa en el destino
-                //string destinationFile = destinationRoot + "\\jcr_root\\";
-                Debug.WriteLine("DESTINATION PATH: " + destinationFile);
 
-                // Obtener el directorio de destino
                 string destinationDirectory = Path.GetDirectoryName(destinationFile);
-                Debug.WriteLine("DESTINATION DIRECTORY: " + destinationDirectory);
-
-                // Crear los directorios necesarios en el destino
                 if (!Directory.Exists(destinationDirectory))
                 {
                     Directory.CreateDirectory(destinationDirectory);
