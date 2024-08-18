@@ -268,11 +268,6 @@ namespace AEM_Push_CRX
             return created;
         }
 
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void open_folder_to_save_zip_button_Click(object sender, EventArgs e)
         {
             if (saveZipFileFolderBrowserDialog.ShowDialog() == DialogResult.OK)

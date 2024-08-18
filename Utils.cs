@@ -114,22 +114,17 @@ namespace AEM_Push_CRX
             try
             {
                 string relativePath = sourceFile.Split("jcr_root")[1];
-                //create XML FILE on vault.
                 string destinationFile = destinationRoot + "\\jcr_root" + relativePath;
                 destinationFile = destinationFile.Replace("\\jcr_root", "");
                 destinationFile = destinationRoot + "\\META-INF\\vault\\";
 
-
                 string destinationDirectory = Path.GetDirectoryName(destinationFile);
-
                 destinationDirectory = Path.GetDirectoryName(destinationFile);
-                Debug.WriteLine("DESTINATION VAULT DIRECTORY: " + destinationDirectory);
 
                 // Crear los directorios necesarios en el destino
                 if (!Directory.Exists(destinationDirectory))
                 {
                     Directory.CreateDirectory(destinationDirectory);
-                    Debug.WriteLine($"Directorio VAULT creado: {destinationDirectory}");
                 }
 
                 String finalRelativePath = "";
@@ -150,7 +145,6 @@ namespace AEM_Push_CRX
 
                 filtersXML = filtersXML.Replace("\\", "/");
 
-                //String currentTimeStamp = GetCurrentDateTimeStamp();
                 String propertiesXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                                        "<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n" +
                                        "<properties>\n" +

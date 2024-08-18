@@ -318,7 +318,6 @@
             adminPasswordTextBox.Size = new Size(136, 23);
             adminPasswordTextBox.TabIndex = 10;
             adminPasswordTextBox.Text = "admin";
-            adminPasswordTextBox.TextChanged += textBox2_TextChanged;
             // 
             // label7
             // 
