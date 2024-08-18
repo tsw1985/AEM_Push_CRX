@@ -13,15 +13,8 @@ using System.IO.Compression;
 
 namespace AEM_Push_CRX
 {
-    public partial class Form1 : Form
+    public partial class AppForm : Form
     {
-
-
-        // TODO: Check to upload css files
-        // TODO: Improve UI
-        // TODO: Pull info while pull is working 
-        // TODO: Improve code
-
 
         private Curl curl;
         private Dictionary<string, string> fileHashes;
@@ -30,7 +23,7 @@ namespace AEM_Push_CRX
         private static string DESTINATION_DIRECTORY = @"C:\windows\temp\aemtemp";
         private static String FOLDER_ZIPPED_FILE = @"C:\windows\temp\aemtemp.zip";
 
-        public Form1()
+        public AppForm()
         {
             InitializeComponent();
             utils = new Utils();
@@ -99,7 +92,7 @@ namespace AEM_Push_CRX
             {
                 string sourceFile = path;
                 //string destinationDirectory = @"C:\windows\temp\aemtemp";
-                created = CopyFileWithStructure(sourceFile, DESTINATION_DIRECTORY);
+                created = CreatePkgZip(sourceFile, DESTINATION_DIRECTORY);
             }
             catch (Exception ex)
             {
@@ -110,139 +103,42 @@ namespace AEM_Push_CRX
             return created;
         }
 
-
-        private bool CopyFileWithStructure(String sourceFile, String destinationRoot)
+        private bool CreatePkgZip(String sourceFile, String destinationRoot)
         {
 
             Boolean fileUploaded = false;
 
             if (sourceFile.Contains("jcr_root"))
             {
-                // *************************** Copy html file *****************************
-                string onlyFromAppsFolder = sourceFile.Split("jcr_root")[1];
-                //sourceFile = onlyFromAppsFolder;
 
-                // Obtener el directorio raíz de la ruta de origen
-                string sourceRoot = Path.GetPathRoot(sourceFile);
-                Debug.WriteLine("SOURCE ROOT: " + sourceRoot);
-
-                // Obtener la ruta relativa del archivo desde el directorio raíz de origen
-                //string relativePath = Path.GetRelativePath(sourceRoot, sourceFile);
-                string relativePath = onlyFromAppsFolder;// Path.GetRelativePath(onlyFromAppsFolder, sourceFile);
-                Debug.WriteLine("RELATIVE PATH: " + relativePath);
-
-                // Construir la ruta completa en el destino
-                string destinationFile = destinationRoot + "\\jcr_root" + relativePath;
-                Debug.WriteLine("DESTINATION PATH: " + destinationFile);
-
-                // Obtener el directorio de destino
-                string destinationDirectory = Path.GetDirectoryName(destinationFile);
-                Debug.WriteLine("DESTINATION DIRECTORY: " + destinationDirectory);
-
-                // Crear los directorios necesarios en el destino
-                if (!Directory.Exists(destinationDirectory))
+                try
                 {
-                    Directory.CreateDirectory(destinationDirectory);
-                    Debug.WriteLine($"Directorio creado: {destinationDirectory}");
+                    String currentTimeStamp = utils.GetCurrentDateTimeStamp();
+                    String relativePath = sourceFile.Split("jcr_root")[1];
+
+                    if ( utils.CreateBasicFolders(sourceFile, destinationRoot, currentTimeStamp))
+                    {
+                        if (utils.CreateJcrRootTargetFolder(sourceFile, destinationRoot, currentTimeStamp, true))
+                        {
+
+                            string destinationFile = destinationRoot + "\\jcr_root" + relativePath;
+                            utils.CopyTargetFileToPkgFolder(sourceFile, destinationFile);
+
+                            if (utils.CreateFilterAndPropertiesFiles(sourceFile, destinationRoot, currentTimeStamp))
+                            {
+                                utils.ZipTempFolder();
+                                
+                                fileUploaded = curl.uploadFile(FOLDER_ZIPPED_FILE, relativePath, currentTimeStamp,
+                                hostTextBox.Text, portTextBox.Text);
+
+                            }
+                        }
+                    }
                 }
-
-                // Copiar el archivo al nuevo directorio
-                //String backUpDestinationFilePath = destinationFile;
-                File.Copy(sourceFile, destinationFile, true);
-                Debug.WriteLine($"Archivo copiado a: {destinationFile}");
-                // *************************** END Copy html file *****************************
-
-
-                //create XML FILE on vault.
-                destinationFile = destinationFile.Replace("\\jcr_root", "");
-                destinationFile = destinationRoot + "\\META-INF\\vault\\";
-                destinationDirectory = Path.GetDirectoryName(destinationFile);
-                Debug.WriteLine("DESTINATION VAULT DIRECTORY: " + destinationDirectory);
-
-                // Crear los directorios necesarios en el destino
-                if (!Directory.Exists(destinationDirectory))
+                catch (Exception ex)
                 {
-                    Directory.CreateDirectory(destinationDirectory);
-                    Debug.WriteLine($"Directorio VAULT creado: {destinationDirectory}");
+                    Debug.WriteLine("Error creating CreateEmtpyZipPkg folder " + ex);
                 }
-
-                String finalRelativePath = "";
-                if (utils.IsADialogXML(relativePath))
-                {
-                    finalRelativePath = relativePath.Replace("\\", "/");
-                    finalRelativePath = finalRelativePath.Replace("_cq_dialog/.content.xml", "cq:dialog");
-                }
-                else
-                {
-                    finalRelativePath = relativePath.Replace("\\", "/");
-                }
-
-                String filtersXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                                    "<workspaceFilter version=\"1.0\">\n" +
-                                    "    <filter root=\"" + finalRelativePath + "\"/>\n" +
-                                    "</workspaceFilter>";
-
-                filtersXML = filtersXML.Replace("\\", "/");
-
-                String currentTimeStamp = utils.GetCurrentDateTimeStamp();
-                String propertiesXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                                       "<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n" +
-                                       "<properties>\n" +
-                                       "<entry key=\"name\">${replacePath}</entry>\n" +
-                                       "<entry key=\"version\">${randomVersion}</entry>\n" +
-                                       "<entry key=\"group\">tmp/repo</entry>\n" +
-                                       "</properties>";
-
-                if (utils.IsADialogXML(relativePath))
-                {
-                    propertiesXML = propertiesXML.Replace("${replacePath}", utils.GetPathName(relativePath))
-                                        .Replace("${randomVersion}", currentTimeStamp)
-                                        .Replace("_cq_dialog-", "cqdialog-");
-                }
-                else //if it is a .html .js file ...
-                {
-                    propertiesXML = propertiesXML.Replace("${replacePath}", utils.GetPathName(relativePath))
-                                        .Replace("${randomVersion}", currentTimeStamp);
-                }
-
-                // It is a .content.xml for component name or other .content.xml file??
-                if (relativePath.Contains("\\.content.xml"))
-                {
-                    filtersXML = filtersXML.Replace("/.content.xml", "");
-                }
-
-                Debug.WriteLine(filtersXML);
-                Debug.WriteLine("------------------------------------");
-                Debug.WriteLine(propertiesXML);
-
-                //write files properties and filters.xml
-                String filtersFileXML = destinationDirectory + "\\filter.xml";
-                String propertiesFileXML = destinationDirectory + "\\properties.xml";
-
-                File.WriteAllText(filtersFileXML, filtersXML);
-                File.WriteAllText(propertiesFileXML, propertiesXML);
-
-
-                //Zip the folder @"C:\windows\temp\aemtemp";
-                String sourceZipFolder = @"C:\windows\temp\aemtemp";
-                if (File.Exists(sourceZipFolder))
-                {
-                    File.Delete(sourceZipFolder);
-                }
-
-
-                //String folderZippedFile = @"C:\windows\temp\aemtemp.zip";
-
-                // Elimina el archivo .zip si ya existe
-                if (File.Exists(FOLDER_ZIPPED_FILE))
-                {
-                    File.Delete(FOLDER_ZIPPED_FILE);
-                }
-
-                // Crea el archivo .zip desde el directorio especificado
-                ZipFile.CreateFromDirectory(sourceZipFolder, FOLDER_ZIPPED_FILE);
-                fileUploaded = curl.uploadFile(FOLDER_ZIPPED_FILE, relativePath, currentTimeStamp,
-                    hostTextBox.Text, portTextBox.Text);
             }
 
             return fileUploaded;

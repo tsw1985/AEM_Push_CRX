@@ -1,6 +1,6 @@
 ﻿namespace AEM_Push_CRX
 {
-    partial class Form1
+    partial class AppForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -283,7 +283,7 @@
             hostTextBox.Name = "hostTextBox";
             hostTextBox.Size = new Size(200, 23);
             hostTextBox.TabIndex = 4;
-            hostTextBox.Text = "localhost";
+            hostTextBox.Text = "192.168.1.196";
             // 
             // label2
             // 
@@ -350,14 +350,14 @@
             // 
             openFileDialog.FileName = "filePath";
             // 
-            // Form1
+            // AppForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(groupBox3);
             Controls.Add(tabControl1);
-            Name = "Form1";
+            Name = "AppForm";
             Text = "G85 - CRX Auto Save and download 1.0";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
