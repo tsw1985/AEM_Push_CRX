@@ -201,7 +201,7 @@
             button2.Name = "button2";
             button2.Size = new Size(97, 23);
             button2.TabIndex = 7;
-            button2.Text = "Set folder";
+            button2.Text = "Select folder";
             button2.UseVisualStyleBackColor = true;
             button2.Click += open_folder_to_save_zip_button_Click;
             // 
@@ -221,7 +221,7 @@
             pullFromCrxButton.Name = "pullFromCrxButton";
             pullFromCrxButton.Size = new Size(566, 24);
             pullFromCrxButton.TabIndex = 5;
-            pullFromCrxButton.Text = "Pull file";
+            pullFromCrxButton.Text = "Download zip package";
             pullFromCrxButton.UseVisualStyleBackColor = true;
             pullFromCrxButton.Click += pullFromCrxButton_Click;
             // 
@@ -256,9 +256,9 @@
             label4.AutoSize = true;
             label4.Location = new Point(46, 36);
             label4.Name = "label4";
-            label4.Size = new Size(25, 15);
+            label4.Size = new Size(28, 15);
             label4.TabIndex = 0;
-            label4.Text = "File";
+            label4.Text = "File:";
             // 
             // portTextBox
             // 
