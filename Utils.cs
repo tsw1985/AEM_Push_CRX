@@ -11,15 +11,17 @@ namespace AEM_Push_CRX
 {
     internal class Utils
     {
+
+        private static String CQ_DIALOG = "_cq_dialog";
+        private static String META_VAULT =  @"\META-INF\vault\" ;
+
         public bool IsADialogXML(string relativePath)
         {
             bool isADialogXML = false;
-            // Obtener la ruta de la carpeta que contiene el archivo
             string directoryPath = Path.GetDirectoryName(relativePath);
 
-            // Obtener la carpeta padre
             string parentFolderName = new DirectoryInfo(directoryPath).Name;
-            if (parentFolderName.Equals("_cq_dialog"))
+            if (parentFolderName.Equals(CQ_DIALOG))
             {
                 isADialogXML = true;
             }
@@ -31,8 +33,6 @@ namespace AEM_Push_CRX
             bool fileCopied = true;
             try
             {
-                // Copiar el archivo al nuevo directorio
-                //String backUpDestinationFilePath = destinationFile;
                 File.Copy(sourceFile, destinationFile, true);
             }
             catch (Exception ex)
@@ -51,15 +51,14 @@ namespace AEM_Push_CRX
 
             try
             {
-                string onlyFromAppsFolder = sourceFile.Split("jcr_root")[1];
+                string onlyFromAppsFolder = sourceFile.Split(AppForm.JCR_ROOT)[1];
                 string sourceRoot = Path.GetPathRoot(sourceFile);
-                string destinationFile = destinationRoot + "\\jcr_root\\";
+                string destinationFile = destinationRoot + "\\" + AppForm.JCR_ROOT + "\\";
                 string destinationDirectory = Path.GetDirectoryName(destinationFile);
 
                 if (!Directory.Exists(destinationDirectory))
                 {
                     Directory.CreateDirectory(destinationDirectory);
-                    Debug.WriteLine($"Directorio creado: {destinationDirectory}");
                 }
 
             }
@@ -78,24 +77,23 @@ namespace AEM_Push_CRX
 
             try
             {
-                string onlyFromAppsFolder = sourceFile.Split("jcr_root")[1];
+                string onlyFromAppsFolder = sourceFile.Split(AppForm.JCR_ROOT)[1];
                 string sourceRoot = Path.GetPathRoot(sourceFile);
-                string relativePath = onlyFromAppsFolder;// Path.GetRelativePath(onlyFromAppsFolder, sourceFile);
+                string relativePath = onlyFromAppsFolder;
                 string destinationFile = "";
                 if (addRelativePath)
                 {
-                    destinationFile = destinationRoot + "\\jcr_root" + relativePath;
+                    destinationFile = destinationRoot + "\\" + AppForm.JCR_ROOT + relativePath;
                 }
                 else
                 {
-                    destinationFile = destinationRoot + "\\jcr_root\\";
+                    destinationFile = destinationRoot + "\\" + AppForm.JCR_ROOT + "\\";
                 }
 
                 string destinationDirectory = Path.GetDirectoryName(destinationFile);
                 if (!Directory.Exists(destinationDirectory))
                 {
                     Directory.CreateDirectory(destinationDirectory);
-                    Debug.WriteLine($"Directorio creado: {destinationDirectory}");
                 }
             }
             catch (Exception e)
@@ -113,15 +111,14 @@ namespace AEM_Push_CRX
             bool filesCreated = true;
             try
             {
-                string relativePath = sourceFile.Split("jcr_root")[1];
-                string destinationFile = destinationRoot + "\\jcr_root" + relativePath;
-                destinationFile = destinationFile.Replace("\\jcr_root", "");
-                destinationFile = destinationRoot + "\\META-INF\\vault\\";
+                string relativePath = sourceFile.Split(AppForm.JCR_ROOT)[1];
+                string destinationFile = destinationRoot + "\\" + AppForm.JCR_ROOT + relativePath;
+                destinationFile = destinationFile.Replace("\\" + AppForm.JCR_ROOT, "");
+                destinationFile = destinationRoot + META_VAULT; 
 
                 string destinationDirectory = Path.GetDirectoryName(destinationFile);
                 destinationDirectory = Path.GetDirectoryName(destinationFile);
 
-                // Crear los directorios necesarios en el destino
                 if (!Directory.Exists(destinationDirectory))
                 {
                     Directory.CreateDirectory(destinationDirectory);
@@ -156,13 +153,13 @@ namespace AEM_Push_CRX
                 if (IsADialogXML(relativePath))
                 {
                     propertiesXML = propertiesXML.Replace("${replacePath}", GetPathName(relativePath))
-                                        .Replace("${randomVersion}", currentTimeStamp)
-                                        .Replace("_cq_dialog-", "cqdialog-");
+                                                 .Replace("${randomVersion}", currentTimeStamp)
+                                                 .Replace("_cq_dialog-", "cqdialog-");
                 }
                 else //if it is a .html .js file ...
                 {
                     propertiesXML = propertiesXML.Replace("${replacePath}", GetPathName(relativePath))
-                                        .Replace("${randomVersion}", currentTimeStamp);
+                                                 .Replace("${randomVersion}", currentTimeStamp);
                 }
 
                 // It is a .content.xml for component name or other .content.xml file??
@@ -171,12 +168,6 @@ namespace AEM_Push_CRX
                     filtersXML = filtersXML.Replace("/.content.xml", "");
                 }
 
-                Debug.WriteLine("------------ UTILS -----------------");
-                Debug.WriteLine(filtersXML);
-                Debug.WriteLine("------------ END UTILS -----------------");
-                Debug.WriteLine(propertiesXML);
-
-                //write files properties and filters.xml
                 String filtersFileXML = destinationDirectory + "\\filter.xml";
                 String propertiesFileXML = destinationDirectory + "\\properties.xml";
 
@@ -193,9 +184,9 @@ namespace AEM_Push_CRX
 
         public String CreateEmtpyZipPkg(String sourceFile, String destinationRoot , String currentTimeStamp)
         {
-            string relativePath = sourceFile.Split("jcr_root")[1];
+            string relativePath = sourceFile.Split(AppForm.JCR_ROOT)[1];
 
-            if (sourceFile.Contains("jcr_root"))
+            if (sourceFile.Contains(AppForm.JCR_ROOT))
             {
                 try
                 {
@@ -214,10 +205,7 @@ namespace AEM_Push_CRX
                 {
                     Debug.WriteLine("Error creating CreateEmtpyZipPkg folder " + ex);
                 }
-                
             }
-            
-
             return GetPathName(relativePath);
         }
 
@@ -227,23 +215,18 @@ namespace AEM_Push_CRX
 
             try
             {
-                //Zip the folder @"C:\windows\temp\aemtemp";
-                String sourceZipFolder = @"C:\windows\temp\aemtemp";
-                if (File.Exists(sourceZipFolder))
+
+                if (File.Exists(AppForm.DESTINATION_DIRECTORY))
                 {
-                    File.Delete(sourceZipFolder);
+                    File.Delete(AppForm.DESTINATION_DIRECTORY);
                 }
 
-                String folderZippedFile = @"C:\windows\temp\aemtemp.zip";
-
-                // Elimina el archivo .zip si ya existe
-                if (File.Exists(folderZippedFile))
+                if (File.Exists(AppForm.FOLDER_ZIPPED_FILE))
                 {
-                    File.Delete(folderZippedFile);
+                    File.Delete(AppForm.FOLDER_ZIPPED_FILE);
                 }
 
-                // Crea el archivo .zip desde el directorio especificado
-                ZipFile.CreateFromDirectory(sourceZipFolder, folderZippedFile);
+                ZipFile.CreateFromDirectory(AppForm.DESTINATION_DIRECTORY, AppForm.FOLDER_ZIPPED_FILE);
 
             }
             catch (Exception e)
@@ -263,6 +246,18 @@ namespace AEM_Push_CRX
             DateTime now = DateTime.UtcNow;
             long timestamp = ((DateTimeOffset)now).ToUnixTimeSeconds();
             return timestamp.ToString();
+        }
+
+
+        public bool IsAllowedFile(String filePath)
+        {
+            return filePath.EndsWith(".html") ||
+                   filePath.EndsWith(".xml")  ||
+                   filePath.EndsWith(".js")   ||
+                   filePath.EndsWith(".css")  ||
+                   filePath.EndsWith(".txt")  ||
+                   filePath.EndsWith(".jsp")  ||
+                   filePath.EndsWith(".less");
         }
 
     }

@@ -52,8 +52,7 @@ namespace AEM_Push_CRX
             }
             catch (Exception ex)
             {
-                // Mostrar cualquier excepción en un cuadro de mensaje
-                MessageBox.Show("Ocurrió un error al ejecutar el comando:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error executing CURL command:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return resultInstall && resultDelete && resultUpload;
 
@@ -65,8 +64,6 @@ namespace AEM_Push_CRX
             bool resultUpload = false;
             bool resultBuild = false;
             bool resultDownload = false;
-
-            Debug.WriteLine("Download fileee");
 
             String commandUploadZip = curlHeadCommand + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
             resultUpload = ExecuteCurl(commandUploadZip);

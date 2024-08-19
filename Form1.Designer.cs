@@ -30,7 +30,7 @@
         {
             appBrowserDialog = new FolderBrowserDialog();
             groupBox1 = new GroupBox();
-            button1 = new Button();
+            cleanLogButton = new Button();
             filesChangedLoggerTextBox = new TextBox();
             tabControl1 = new TabControl();
             pushTabPage = new TabPage();
@@ -70,7 +70,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(button1);
+            groupBox1.Controls.Add(cleanLogButton);
             groupBox1.Controls.Add(filesChangedLoggerTextBox);
             groupBox1.Location = new Point(6, 65);
             groupBox1.Name = "groupBox1";
@@ -79,15 +79,15 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Files changed";
             // 
-            // button1
+            // cleanLogButton
             // 
-            button1.Location = new Point(8, 20);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 1;
-            button1.Text = "Clean log";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            cleanLogButton.Location = new Point(8, 20);
+            cleanLogButton.Name = "cleanLogButton";
+            cleanLogButton.Size = new Size(75, 23);
+            cleanLogButton.TabIndex = 1;
+            cleanLogButton.Text = "Clean log";
+            cleanLogButton.UseVisualStyleBackColor = true;
+            cleanLogButton.Click += clean_log_Click;
             // 
             // filesChangedLoggerTextBox
             // 
@@ -152,9 +152,9 @@
             // 
             // searchFolderButton
             // 
-            searchFolderButton.Location = new Point(663, 17);
+            searchFolderButton.Location = new Point(661, 21);
             searchFolderButton.Name = "searchFolderButton";
-            searchFolderButton.Size = new Size(87, 34);
+            searchFolderButton.Size = new Size(90, 25);
             searchFolderButton.TabIndex = 2;
             searchFolderButton.Text = "Search Folder";
             searchFolderButton.UseVisualStyleBackColor = true;
@@ -376,7 +376,7 @@
         private FolderBrowserDialog appBrowserDialog;
         private GroupBox groupBox1;
         private TextBox filesChangedLoggerTextBox;
-        private Button button1;
+        private Button cleanLogButton;
         private TabControl tabControl1;
         private TabPage pushTabPage;
         private TabPage pullTabPage;

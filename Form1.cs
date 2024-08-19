@@ -20,14 +20,20 @@ namespace AEM_Push_CRX
         private Dictionary<string, string> fileHashes;
         private Utils utils;
         FileSystemWatcher watcher;
-        private static string DESTINATION_DIRECTORY = @"C:\windows\temp\aemtemp";
-        private static String FOLDER_ZIPPED_FILE = @"C:\windows\temp\aemtemp.zip";
+        public static string DESTINATION_DIRECTORY = @"C:\windows\temp\aemtemp";
+        public static String FOLDER_ZIPPED_FILE = @"C:\windows\temp\aemtemp.zip";
+        public static String JCR_ROOT = "jcr_root";
 
         public AppForm()
         {
             InitializeComponent();
+            InitObjects();
+        }
+
+        private void InitObjects()
+        {
             utils = new Utils();
-            curl = new Curl(utils,adminUserTextBox.Text , adminPasswordTextBox.Text);
+            curl = new Curl(utils, adminUserTextBox.Text, adminPasswordTextBox.Text);
         }
 
         // Inicializar FileSystemWatcher
@@ -37,7 +43,7 @@ namespace AEM_Push_CRX
             if (!filePath.Equals(""))
             {
 
-                filesChangedLoggerTextBox.Text = "Starting log on : " + filePath;
+                filesChangedLoggerTextBox.Text = "Starting log files ... " + filePath;
                 filesChangedLoggerTextBox.AppendText(Environment.NewLine);
 
                 fileHashes = new Dictionary<string, string>();
@@ -51,13 +57,13 @@ namespace AEM_Push_CRX
                     IncludeSubdirectories = true
                 };
 
-                // Suscribirse a los eventos
+                //set events to listen
                 watcher.Changed += OnChanged;
                 //watcher.Created += OnChanged;
                 //watcher.Deleted += OnChanged;
                 //watcher.Renamed += OnRenamed;
 
-                // Comenzar a monitorear
+                //Start watcher
                 watcher.EnableRaisingEvents = true;
 
             }
@@ -69,17 +75,12 @@ namespace AEM_Push_CRX
             System.Threading.Thread.Sleep(500); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
-                String filePath = e.FullPath;
-                if (filePath.EndsWith(".html") || filePath.EndsWith(".xml") || 
-                    filePath.EndsWith(".js") || filePath.EndsWith(".css") ||
-                        filePath.EndsWith(".less"))
+                if (utils.IsAllowedFile(e.FullPath))
                 {
-                    // Verificar si el contenido del archivo ha cambiado
-                    if (FileHasChanged(filePath))
+                    if (FileHasChanged(e.FullPath))
                     {
-                        Debug.WriteLine($"Archivo: {e.FullPath} {e.ChangeType}");
-                        UploadFile(filePath);
-                        UpdateTextBox(filePath + " " + e.ChangeType);
+                        UploadFile(e.FullPath);
+                        UpdateTextBox(e.FullPath + " " + e.ChangeType);
                     }
                 }
             }
@@ -95,7 +96,7 @@ namespace AEM_Push_CRX
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("EXCEPTION !! " + ex.Message);
+                Debug.WriteLine("EXCEPTION UploadFile() " + ex.Message);
                 created = false;
             }
 
@@ -104,29 +105,27 @@ namespace AEM_Push_CRX
 
         private bool CreatePkgZip(String sourceFile, String destinationRoot)
         {
-
             Boolean fileUploaded = false;
 
-            if (sourceFile.Contains("jcr_root"))
+            if (sourceFile.Contains(JCR_ROOT))
             {
 
                 try
                 {
                     String currentTimeStamp = utils.GetCurrentDateTimeStamp();
-                    String relativePath = sourceFile.Split("jcr_root")[1];
+                    String relativePath = sourceFile.Split(JCR_ROOT)[1];
 
-                    if ( utils.CreateBasicFolders(sourceFile, destinationRoot, currentTimeStamp))
+                    if (utils.CreateBasicFolders(sourceFile, destinationRoot, currentTimeStamp))
                     {
                         if (utils.CreateJcrRootTargetFolder(sourceFile, destinationRoot, currentTimeStamp, true))
                         {
 
-                            string destinationFile = destinationRoot + "\\jcr_root" + relativePath;
+                            string destinationFile = destinationRoot + "\\" + JCR_ROOT + relativePath;
                             utils.CopyTargetFileToPkgFolder(sourceFile, destinationFile);
 
                             if (utils.CreateFilterAndPropertiesFiles(sourceFile, destinationRoot, currentTimeStamp))
                             {
                                 utils.ZipTempFolder();
-                                
                                 fileUploaded = curl.uploadFile(FOLDER_ZIPPED_FILE, relativePath, currentTimeStamp,
                                 hostTextBox.Text, portTextBox.Text);
 
@@ -175,12 +174,11 @@ namespace AEM_Push_CRX
                 fileHashes[filePath] = newHash;
 
             }
-            catch (IOException)
+            catch (IOException io)
             {
-
+                Debug.WriteLine("Error FileHasChanged() " + io);
             }
 
-            // Estamos en el hilo de la UI, podemos actualizar el TextBox directamente
             return fileChanged;
         }
 
@@ -195,24 +193,14 @@ namespace AEM_Push_CRX
         }
 
 
-        private void OnRenamed(object source, RenamedEventArgs e)
-        {
-            Debug.WriteLine($"Archivo renombrado de {e.OldFullPath} a {e.FullPath}");
-        }
-
         private void searchFolderButton_Click(object sender, EventArgs e)
         {
-            appBrowserDialog.ShowDialog(this);
-            appFoldertextBox.Text = appBrowserDialog.SelectedPath;
-            initFileWatcher(appBrowserDialog.SelectedPath);
+            if (appBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                appFoldertextBox.Text = appBrowserDialog.SelectedPath;
+                initFileWatcher(appBrowserDialog.SelectedPath);
+            }
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            filesChangedLoggerTextBox.Text = "";
-        }
-
-
 
         private void searchFileButton_Click(object sender, EventArgs e)
         {
@@ -229,7 +217,7 @@ namespace AEM_Push_CRX
             if (!pathPullFileTextBox.Text.Equals("") && !folderZipFileTextBox.Text.Equals(""))
             {
 
-                resultLabel.Text = "Creating package ... Please wait";
+                resultLabel.Text = "Creating package ... Please wait ...";
 
                 if (PullFile(pathPullFileTextBox.Text, DESTINATION_DIRECTORY)) //DESTINATION_DIRECTORY
                 {
@@ -240,7 +228,6 @@ namespace AEM_Push_CRX
                     resultLabel.Text = "[ERROR] Creating package :(";
                 }
             }
-
         }
 
 
@@ -249,7 +236,6 @@ namespace AEM_Push_CRX
             bool created = false;
             try
             {
-
                 String timeStamp = utils.GetCurrentDateTimeStamp();
                 String relativePath = utils.CreateEmtpyZipPkg(path, destinationRootPath, timeStamp);
 
@@ -274,6 +260,11 @@ namespace AEM_Push_CRX
             {
                 folderZipFileTextBox.Text = saveZipFileFolderBrowserDialog.SelectedPath;
             }
+        }
+
+        private void clean_log_Click(object sender, EventArgs e)
+        {
+            filesChangedLoggerTextBox.Text = "";
         }
     }
 }
