@@ -70,11 +70,12 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(cleanLogButton);
             groupBox1.Controls.Add(filesChangedLoggerTextBox);
             groupBox1.Location = new Point(6, 65);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(756, 265);
+            groupBox1.Size = new Size(882, 265);
             groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "Files changed";
@@ -91,22 +92,24 @@
             // 
             // filesChangedLoggerTextBox
             // 
+            filesChangedLoggerTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             filesChangedLoggerTextBox.Location = new Point(7, 52);
             filesChangedLoggerTextBox.Multiline = true;
             filesChangedLoggerTextBox.Name = "filesChangedLoggerTextBox";
             filesChangedLoggerTextBox.ReadOnly = true;
             filesChangedLoggerTextBox.ScrollBars = ScrollBars.Vertical;
-            filesChangedLoggerTextBox.Size = new Size(729, 212);
+            filesChangedLoggerTextBox.Size = new Size(869, 212);
             filesChangedLoggerTextBox.TabIndex = 0;
             // 
             // tabControl1
             // 
+            tabControl1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(pushTabPage);
             tabControl1.Controls.Add(pullTabPage);
             tabControl1.Location = new Point(12, 74);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(776, 364);
+            tabControl1.Size = new Size(902, 364);
             tabControl1.TabIndex = 5;
             // 
             // pushTabPage
@@ -116,19 +119,20 @@
             pushTabPage.Location = new Point(4, 24);
             pushTabPage.Name = "pushTabPage";
             pushTabPage.Padding = new Padding(3);
-            pushTabPage.Size = new Size(768, 336);
+            pushTabPage.Size = new Size(894, 336);
             pushTabPage.TabIndex = 0;
             pushTabPage.Text = "PUSH FILE";
             pushTabPage.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
+            groupBox2.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             groupBox2.Controls.Add(appFoldertextBox);
             groupBox2.Controls.Add(label1);
             groupBox2.Controls.Add(searchFolderButton);
             groupBox2.Location = new Point(6, 6);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(756, 56);
+            groupBox2.Size = new Size(882, 56);
             groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             groupBox2.Text = "App Folder to listen files";
@@ -138,7 +142,7 @@
             appFoldertextBox.Location = new Point(65, 22);
             appFoldertextBox.Name = "appFoldertextBox";
             appFoldertextBox.ReadOnly = true;
-            appFoldertextBox.Size = new Size(592, 23);
+            appFoldertextBox.Size = new Size(708, 23);
             appFoldertextBox.TabIndex = 1;
             // 
             // label1
@@ -152,7 +156,7 @@
             // 
             // searchFolderButton
             // 
-            searchFolderButton.Location = new Point(661, 21);
+            searchFolderButton.Location = new Point(786, 20);
             searchFolderButton.Name = "searchFolderButton";
             searchFolderButton.Size = new Size(90, 25);
             searchFolderButton.TabIndex = 2;
@@ -166,13 +170,14 @@
             pullTabPage.Location = new Point(4, 24);
             pullTabPage.Name = "pullTabPage";
             pullTabPage.Padding = new Padding(3);
-            pullTabPage.Size = new Size(768, 336);
+            pullTabPage.Size = new Size(894, 336);
             pullTabPage.TabIndex = 1;
             pullTabPage.Text = "PULL FILE";
             pullTabPage.UseVisualStyleBackColor = true;
             // 
             // groupBox4
             // 
+            groupBox4.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             groupBox4.Controls.Add(folderZipFileTextBox);
             groupBox4.Controls.Add(button2);
             groupBox4.Controls.Add(label8);
@@ -183,7 +188,7 @@
             groupBox4.Controls.Add(label4);
             groupBox4.Location = new Point(7, 6);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(755, 324);
+            groupBox4.Size = new Size(876, 324);
             groupBox4.TabIndex = 0;
             groupBox4.TabStop = false;
             groupBox4.Text = "Select file to get it from CRX";
@@ -192,12 +197,13 @@
             // 
             folderZipFileTextBox.Location = new Point(81, 55);
             folderZipFileTextBox.Name = "folderZipFileTextBox";
-            folderZipFileTextBox.Size = new Size(565, 23);
+            folderZipFileTextBox.Size = new Size(686, 23);
             folderZipFileTextBox.TabIndex = 8;
             // 
             // button2
             // 
-            button2.Location = new Point(650, 56);
+            button2.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            button2.Location = new Point(773, 55);
             button2.Name = "button2";
             button2.Size = new Size(97, 23);
             button2.TabIndex = 7;
@@ -219,7 +225,7 @@
             pullFromCrxButton.Enabled = false;
             pullFromCrxButton.Location = new Point(80, 83);
             pullFromCrxButton.Name = "pullFromCrxButton";
-            pullFromCrxButton.Size = new Size(566, 24);
+            pullFromCrxButton.Size = new Size(687, 24);
             pullFromCrxButton.TabIndex = 5;
             pullFromCrxButton.Text = "Download zip package";
             pullFromCrxButton.UseVisualStyleBackColor = true;
@@ -236,7 +242,8 @@
             // 
             // searchFileButton
             // 
-            searchFileButton.Location = new Point(650, 27);
+            searchFileButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            searchFileButton.Location = new Point(773, 27);
             searchFileButton.Name = "searchFileButton";
             searchFileButton.Size = new Size(97, 24);
             searchFileButton.TabIndex = 2;
@@ -248,7 +255,7 @@
             // 
             pathPullFileTextBox.Location = new Point(81, 28);
             pathPullFileTextBox.Name = "pathPullFileTextBox";
-            pathPullFileTextBox.Size = new Size(565, 23);
+            pathPullFileTextBox.Size = new Size(686, 23);
             pathPullFileTextBox.TabIndex = 1;
             // 
             // label4
@@ -262,7 +269,7 @@
             // 
             // portTextBox
             // 
-            portTextBox.Location = new Point(287, 20);
+            portTextBox.Location = new Point(426, 20);
             portTextBox.Name = "portTextBox";
             portTextBox.Size = new Size(38, 23);
             portTextBox.TabIndex = 6;
@@ -271,7 +278,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(252, 23);
+            label3.Location = new Point(391, 23);
             label3.Name = "label3";
             label3.Size = new Size(32, 15);
             label3.TabIndex = 5;
@@ -281,7 +288,7 @@
             // 
             hostTextBox.Location = new Point(46, 20);
             hostTextBox.Name = "hostTextBox";
-            hostTextBox.Size = new Size(200, 23);
+            hostTextBox.Size = new Size(339, 23);
             hostTextBox.TabIndex = 4;
             hostTextBox.Text = "192.168.1.196";
             // 
@@ -296,6 +303,7 @@
             // 
             // groupBox3
             // 
+            groupBox3.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             groupBox3.Controls.Add(adminPasswordTextBox);
             groupBox3.Controls.Add(label7);
             groupBox3.Controls.Add(adminUserTextBox);
@@ -304,16 +312,16 @@
             groupBox3.Controls.Add(label2);
             groupBox3.Controls.Add(label3);
             groupBox3.Controls.Add(hostTextBox);
-            groupBox3.Location = new Point(16, 12);
+            groupBox3.Location = new Point(12, 12);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(768, 56);
+            groupBox3.Size = new Size(898, 56);
             groupBox3.TabIndex = 6;
             groupBox3.TabStop = false;
             groupBox3.Text = "AEM Instance config";
             // 
             // adminPasswordTextBox
             // 
-            adminPasswordTextBox.Location = new Point(626, 20);
+            adminPasswordTextBox.Location = new Point(750, 20);
             adminPasswordTextBox.Name = "adminPasswordTextBox";
             adminPasswordTextBox.Size = new Size(136, 23);
             adminPasswordTextBox.TabIndex = 10;
@@ -322,7 +330,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(563, 23);
+            label7.Location = new Point(684, 23);
             label7.Name = "label7";
             label7.Size = new Size(60, 15);
             label7.TabIndex = 9;
@@ -330,7 +338,7 @@
             // 
             // adminUserTextBox
             // 
-            adminUserTextBox.Location = new Point(404, 20);
+            adminUserTextBox.Location = new Point(539, 20);
             adminUserTextBox.Name = "adminUserTextBox";
             adminUserTextBox.Size = new Size(139, 23);
             adminUserTextBox.TabIndex = 8;
@@ -339,7 +347,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(338, 23);
+            label6.Location = new Point(470, 23);
             label6.Name = "label6";
             label6.Size = new Size(63, 15);
             label6.TabIndex = 7;
@@ -353,7 +361,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(926, 450);
             Controls.Add(groupBox3);
             Controls.Add(tabControl1);
             Name = "AppForm";
