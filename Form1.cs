@@ -75,7 +75,7 @@ namespace AEM_Push_CRX
             System.Threading.Thread.Sleep(500); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
-                if (utils.IsAllowedFile(e.FullPath))
+                if (utils.IsAllowedFile(e.FullPath) && !utils.IsTargetDirectoryPresent(e.FullPath) )
                 {
                     if (FileHasChanged(e.FullPath))
                     {

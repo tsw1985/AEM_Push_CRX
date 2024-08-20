@@ -28,6 +28,26 @@ namespace AEM_Push_CRX
             return isADialogXML;
         }
 
+
+        public bool IsTargetDirectoryPresent(string filePath)
+        {
+            DirectoryInfo directory = Directory.GetParent(filePath);
+
+            while (directory != null)
+            {
+                if (directory.Name.Equals("target", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                directory = directory.Parent;
+            }
+
+            return false;
+        }
+
+
+
         public bool CopyTargetFileToPkgFolder(String sourceFile, String destinationFile)
         {
             bool fileCopied = true;
