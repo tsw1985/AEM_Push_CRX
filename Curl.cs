@@ -33,9 +33,11 @@ namespace AEM_Push_CRX
         public bool CheckConnection(String host , String port)
         {
             bool connected = false;
+            String outText = "";
             String checkCommand = curlHeadCommand + " http://" + host + ":" + port;
             Debug.WriteLine(checkCommand);
-            connected = ExecuteCurl(checkCommand, CONNECTION_RESULT_OK);
+            connected = ExecuteCurl(checkCommand, CONNECTION_RESULT_OK , out outText);
+            Debug.WriteLine("OUT CHECK CONN : " + outText);
             return connected;
         }
 
@@ -44,7 +46,8 @@ namespace AEM_Push_CRX
             bool resultUpload = false;
             bool resultInstall = false;
             bool resultDelete = false;
-            
+            String outText = "";
+
             try
             {
                 if (utils.IsADialogXML(relativePath))
@@ -54,19 +57,24 @@ namespace AEM_Push_CRX
 
                 string commandUploadZip = curlHeadCommand      + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
                 Debug.WriteLine(commandUploadZip);
-                resultUpload = ExecuteCurl(commandUploadZip, Curl.RESULT_OK);
+                resultUpload = ExecuteCurl(commandUploadZip, Curl.RESULT_OK , out outText);
+                Debug.WriteLine("OUT UPLOADZIP: " + outText);
 
+                outText = "";
                 System.Threading.Thread.Sleep(100);
 
                 string commandInstallZip = curlHeadCommand     + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=install";
                 Debug.WriteLine(commandInstallZip);
-                resultInstall = ExecuteCurl(commandInstallZip, Curl.RESULT_OK);
-
+                resultInstall = ExecuteCurl(commandInstallZip, Curl.RESULT_OK, out outText);
+                Debug.WriteLine("OUT INSTALL: " + outText);
                 System.Threading.Thread.Sleep(100);
+
+                outText = "";
 
                 string commandDeleteZip = curlHeadCommand      + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=delete";
                 Debug.WriteLine(commandDeleteZip);
-                resultDelete = ExecuteCurl(commandDeleteZip, Curl.RESULT_OK);
+                resultDelete = ExecuteCurl(commandDeleteZip, Curl.RESULT_OK, out outText);
+                Debug.WriteLine("OUT DELETE: " + outText);
 
             }
             catch (Exception ex)
@@ -83,27 +91,31 @@ namespace AEM_Push_CRX
             bool resultUpload = false;
             bool resultBuild = false;
 
+            String outText = "";
             String commandUploadZip = curlHeadCommand + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
             Debug.WriteLine(commandUploadZip);
-            resultUpload = ExecuteCurl(commandUploadZip, Curl.RESULT_OK);
+            resultUpload = ExecuteCurl(commandUploadZip, Curl.RESULT_OK , out outText);
+            Debug.WriteLine("OUT UPLOAD: " + outText);
 
             System.Threading.Thread.Sleep(100);
 
             string commandBuildPackage = curlHeadCommand + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath  + "-" + timeStamp + ".zip" + "?cmd=build";
             Debug.WriteLine( commandBuildPackage);
-            resultBuild = ExecuteCurl(commandBuildPackage, Curl.RESULT_OK);
+            resultBuild = ExecuteCurl(commandBuildPackage, Curl.RESULT_OK, out outText);
+            Debug.WriteLine("OUT BUILD: " + outText);
 
             System.Threading.Thread.Sleep(100);
 
             string commanDownloadPackage = curlHeadCommand + " -f -s -S -o \"" + destinationFolder + "\\pkg.zip\"" + " http://" + host +  ":" + port + "/etc/packages/tmp/repo/" + relativePath + "-" + timeStamp + ".zip";
             Debug.WriteLine( commanDownloadPackage);
-            ExecuteCurl(commanDownloadPackage, Curl.RESULT_OK);
+            ExecuteCurl(commanDownloadPackage, Curl.RESULT_OK, out outText);
+            Debug.WriteLine("OUT Download: " + outText);
 
             return resultUpload && resultBuild;
         }
 
 
-        private bool ExecuteCurl(String curlCommand , String expectedResult)
+        private bool ExecuteCurl(String curlCommand , String expectedResult , out String outText)
         {
             bool result = false;
 
@@ -119,6 +131,7 @@ namespace AEM_Push_CRX
             {
                 process.Start();
                 string output = process.StandardOutput.ReadToEnd();
+                outText = output;
                 string error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
