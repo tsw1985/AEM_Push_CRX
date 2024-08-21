@@ -75,16 +75,71 @@ namespace AEM_Push_CRX
             System.Threading.Thread.Sleep(500); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
-                if (utils.IsAllowedFile(e.FullPath) && !utils.IsTargetDirectoryPresent(e.FullPath) )
+                if (utils.IsAllowedFile(e.FullPath) && !utils.IsTargetDirectoryPresent(e.FullPath))
                 {
                     if (FileHasChanged(e.FullPath))
                     {
-                        UploadFile(e.FullPath);
-                        UpdateTextBox(e.FullPath + " " + e.ChangeType);
+
+                        //Normal mode
+                        /*if (UploadFile(e.FullPath))
+                        {
+                            UpdateTextBox(e.FullPath + " | " + e.ChangeType);
+                        }
+                        else
+                        {
+                            UpdateTextBox(e.FullPath + " | " + " ERROR");
+                        }*/
+
+
+                        //by background worker
+                        if (!backgroundWorker1.IsBusy)
+                        {
+                            backgroundWorker1.RunWorkerAsync(e);
+                        }
+
                     }
                 }
             }
         }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                Debug.WriteLine("UPLOADING!!");
+                BackgroundWorker helperBW = sender as BackgroundWorker;
+                FileSystemEventArgs argument = (FileSystemEventArgs)e.Argument;
+
+                String fullPath = argument.FullPath;
+                String changeType = argument.ChangeType.ToString();
+
+                if(UploadFile(fullPath))
+                {
+                    UpdateTextBox(fullPath + " | " + changeType);
+                }
+                else
+                {
+                    UpdateTextBox(fullPath + " | " + " ERROR");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception UPLOADING!! backgroundWorker1_DoWork()");
+            }
+            
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Debug.WriteLine("UPLOADING FINISHED !!");
+        }
+
 
         private bool UploadFile(String path)
         {
@@ -119,7 +174,6 @@ namespace AEM_Push_CRX
                     {
                         if (utils.CreateJcrRootTargetFolder(sourceFile, destinationRoot, currentTimeStamp, true))
                         {
-
                             string destinationFile = destinationRoot + "\\" + JCR_ROOT + relativePath;
                             utils.CopyTargetFileToPkgFolder(sourceFile, destinationFile);
 
@@ -128,7 +182,6 @@ namespace AEM_Push_CRX
                                 utils.ZipTempFolder();
                                 fileUploaded = curl.uploadFile(FOLDER_ZIPPED_FILE, relativePath, currentTimeStamp,
                                 hostTextBox.Text, portTextBox.Text);
-
                             }
                         }
                     }
@@ -266,5 +319,7 @@ namespace AEM_Push_CRX
         {
             filesChangedLoggerTextBox.Text = "";
         }
+
+        
     }
 }

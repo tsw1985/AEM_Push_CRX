@@ -41,12 +41,19 @@ namespace AEM_Push_CRX
                 }
 
                 string commandUploadZip = curlHeadCommand      + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
+                Debug.WriteLine(commandUploadZip);
                 resultUpload = ExecuteCurl(commandUploadZip);
 
+                System.Threading.Thread.Sleep(100);
+
                 string commandInstallZip = curlHeadCommand     + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=install";
+                Debug.WriteLine(commandInstallZip);
                 resultInstall = ExecuteCurl(commandInstallZip);
 
+                System.Threading.Thread.Sleep(100);
+
                 string commandDeleteZip = curlHeadCommand      + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=delete";
+                Debug.WriteLine(commandDeleteZip);
                 resultDelete = ExecuteCurl(commandDeleteZip);
 
             }
@@ -63,20 +70,22 @@ namespace AEM_Push_CRX
         {
             bool resultUpload = false;
             bool resultBuild = false;
-            bool resultDownload = false;
 
             String commandUploadZip = curlHeadCommand + " -f -s -S -F package=@" + path + "  -F force=true http://" + host + ":" + port + "/crx/packmgr/service/.json?cmd=upload";
+            Debug.WriteLine(commandUploadZip);
             resultUpload = ExecuteCurl(commandUploadZip);
 
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(100);
 
             string commandBuildPackage = curlHeadCommand + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath  + "-" + timeStamp + ".zip" + "?cmd=build";
+            Debug.WriteLine( commandBuildPackage);
             resultBuild = ExecuteCurl(commandBuildPackage);
 
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(100);
 
             string commanDownloadPackage = curlHeadCommand + " -f -s -S -o \"" + destinationFolder + "\\pkg.zip\"" + " http://" + host +  ":" + port + "/etc/packages/tmp/repo/" + relativePath + "-" + timeStamp + ".zip";
-            resultDownload = ExecuteCurl(commanDownloadPackage);
+            Debug.WriteLine( commanDownloadPackage);
+            ExecuteCurl(commanDownloadPackage);
 
             return resultUpload && resultBuild;
         }

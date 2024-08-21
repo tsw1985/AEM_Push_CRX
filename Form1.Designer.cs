@@ -59,6 +59,7 @@
             label6 = new Label();
             openFileDialog = new OpenFileDialog();
             saveZipFileFolderBrowserDialog = new FolderBrowserDialog();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             groupBox1.SuspendLayout();
             tabControl1.SuspendLayout();
             pushTabPage.SuspendLayout();
@@ -93,12 +94,12 @@
             // filesChangedLoggerTextBox
             // 
             filesChangedLoggerTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            filesChangedLoggerTextBox.Location = new Point(7, 52);
+            filesChangedLoggerTextBox.Location = new Point(6, 49);
             filesChangedLoggerTextBox.Multiline = true;
             filesChangedLoggerTextBox.Name = "filesChangedLoggerTextBox";
             filesChangedLoggerTextBox.ReadOnly = true;
             filesChangedLoggerTextBox.ScrollBars = ScrollBars.Vertical;
-            filesChangedLoggerTextBox.Size = new Size(869, 212);
+            filesChangedLoggerTextBox.Size = new Size(869, 210);
             filesChangedLoggerTextBox.TabIndex = 0;
             // 
             // tabControl1
@@ -357,6 +358,12 @@
             // 
             openFileDialog.FileName = "filePath";
             // 
+            // backgroundWorker1
+            // 
+            backgroundWorker1.DoWork += backgroundWorker1_DoWork;
+            backgroundWorker1.ProgressChanged += backgroundWorker1_ProgressChanged;
+            backgroundWorker1.RunWorkerCompleted += backgroundWorker1_RunWorkerCompleted;
+            // 
             // AppForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -412,5 +419,6 @@
         private Label label8;
         private TextBox folderZipFileTextBox;
         private FolderBrowserDialog saveZipFileFolderBrowserDialog;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
