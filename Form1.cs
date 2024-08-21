@@ -79,26 +79,18 @@ namespace AEM_Push_CRX
                 {
                     if (FileHasChanged(e.FullPath))
                     {
-
-                        //Normal mode
-                        /*if (UploadFile(e.FullPath))
-                        {
-                            UpdateTextBox(e.FullPath + " | " + e.ChangeType);
-                        }
-                        else
-                        {
-                            UpdateTextBox(e.FullPath + " | " + " ERROR");
-                        }*/
-
-
-                        //by background worker
-                        if (!backgroundWorker1.IsBusy)
-                        {
-                            backgroundWorker1.RunWorkerAsync(e);
-                        }
-
+                        launchWorker(e);
                     }
                 }
+            }
+        }
+
+        private void launchWorker(FileSystemEventArgs e)
+        {
+            //by background worker
+            if (!backgroundWorker1.IsBusy)
+            {
+                backgroundWorker1.RunWorkerAsync(e);
             }
         }
 
@@ -180,7 +172,7 @@ namespace AEM_Push_CRX
                             if (utils.CreateFilterAndPropertiesFiles(sourceFile, destinationRoot, currentTimeStamp))
                             {
                                 utils.ZipTempFolder();
-                                fileUploaded = curl.uploadFile(FOLDER_ZIPPED_FILE, relativePath, currentTimeStamp,
+                                fileUploaded = curl.UploadFile(FOLDER_ZIPPED_FILE, relativePath, currentTimeStamp,
                                 hostTextBox.Text, portTextBox.Text);
                             }
                         }
@@ -248,10 +240,20 @@ namespace AEM_Push_CRX
 
         private void searchFolderButton_Click(object sender, EventArgs e)
         {
+
+
+
             if (appBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                appFoldertextBox.Text = appBrowserDialog.SelectedPath;
-                initFileWatcher(appBrowserDialog.SelectedPath);
+                if (curl.CheckConnection(hostTextBox.Text, portTextBox.Text))
+                {
+                    appFoldertextBox.Text = appBrowserDialog.SelectedPath;
+                    initFileWatcher(appBrowserDialog.SelectedPath);
+                }
+                else
+                {
+                    MessageBox.Show("INSTANCE NOT FOUNDED");
+                }
             }
         }
 
