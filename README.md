@@ -1,6 +1,6 @@
-# AEM AUTO PUSH CRX Lister
+# AEM AUTO PUSH CRX Listener Beta.
 
-This project is a program to upload files to crx automatically. You can push and pull files from CRX . The push will be automatically , pull , you can choose your file from your app project folder , select a folder to save the pkg.zip and all its done.
+This project is a program to upload files to crx automatically. You can push and pull files from CRX . The push will be automatically , for pulling , you can choose your file from your app project folder , select a folder to save the pkg.zip and all its done.
 
 
 # Listen files :
@@ -9,8 +9,14 @@ This project is a program to upload files to crx automatically. You can push and
 - Click on button "Select folder" . You must select you ui.app folder of your project .
 - All is done . Now , if you modify a .html file , js , .xml , .css ... , and you save your changes , the file will be uploaded to CRX.
 
+  ![fibob](https://github.com/tsw1985/AEM_Push_CRX/blob/master/demo.png)
+
 # Pull file :
 
-- Click 
+- Click on "Pull file" tab
+- Click on "Select file" . Here, you must select your file from your project.
+- Select a folder to download the pkg.zip
+- Done :)
 
-![fibob](https://github.com/tsw1985/AEM_Push_CRX/blob/master/demo.png)
+![fibob](https://github.com/tsw1985/AEM_Push_CRX/blob/master/pulldemo.png)
+
