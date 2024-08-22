@@ -14,7 +14,7 @@ This project is a program to upload files to crx automatically. You can push and
 # Pull file :
 
 - Click on "Pull file" tab
-- Click on "Select file" . Here, you must select your file from your project.
+- Click on "Search file" . Here, you must select your file from your project.
 - Select a folder to download the pkg.zip
 - Done :)
 
