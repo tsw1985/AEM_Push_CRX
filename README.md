@@ -16,6 +16,7 @@ This project is a program to upload files to crx automatically. You can push and
 - Click on "Pull file" tab
 - Click on "Search file" . Here, you must select your file from your project.
 - Select a folder to download the pkg.zip
+- Click on button "Download file"
 - Done :)
 
 ![fibob](https://github.com/tsw1985/AEM_Push_CRX/blob/master/pulldemo.png)
