@@ -371,8 +371,9 @@
             ClientSize = new Size(926, 450);
             Controls.Add(groupBox3);
             Controls.Add(tabControl1);
+            MaximizeBox = false;
             Name = "AppForm";
-            Text = "G85 - CRX Auto Save and download 1.0";
+            Text = "G85 - CRX Listener";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             tabControl1.ResumeLayout(false);
