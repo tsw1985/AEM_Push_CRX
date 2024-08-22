@@ -373,7 +373,7 @@
             Controls.Add(tabControl1);
             MaximizeBox = false;
             Name = "AppForm";
-            Text = "G85 - CRX Listener";
+            Text = "G85 - CRX Listener 1.0 Beta";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             tabControl1.ResumeLayout(false);
