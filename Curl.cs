@@ -21,12 +21,14 @@ namespace AEM_Push_CRX
         private String userName;
         private String password;
         private String curlHeadCommand;
+        private String curlHeadCheckConnCommand;
 
         public Curl(Utils utils , String userName , String password) { 
             this.utils = utils;
             this.userName = userName;
             this.password = password;
-            this.curlHeadCommand = "curl -I -u " + userName  + ":" + password + " ";
+            this.curlHeadCommand = "curl -u " + userName  + ":" + password + " ";
+            this.curlHeadCheckConnCommand = "curl -I -u " + userName + ":" + password + " ";
         }
 
 
@@ -34,7 +36,7 @@ namespace AEM_Push_CRX
         {
             bool connected = false;
             String outText = "";
-            String checkCommand = curlHeadCommand + " http://" + host + ":" + port;
+            String checkCommand = curlHeadCheckConnCommand + " http://" + host + ":" + port;
             Debug.WriteLine(checkCommand);
             connected = ExecuteCurl(checkCommand, CONNECTION_RESULT_OK , out outText);
             Debug.WriteLine("OUT CHECK CONN : " + outText);
@@ -61,13 +63,13 @@ namespace AEM_Push_CRX
                 Debug.WriteLine("OUT UPLOADZIP: " + outText);
 
                 outText = "";
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(500);
 
                 string commandInstallZip = curlHeadCommand     + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/repo" + relativePath.Replace("\\", "-") + "-" + timestamp + ".zip" + "?cmd=install";
                 Debug.WriteLine(commandInstallZip);
                 resultInstall = ExecuteCurl(commandInstallZip, Curl.RESULT_OK, out outText);
                 Debug.WriteLine("OUT INSTALL: " + outText);
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(500);
 
                 outText = "";
 
@@ -97,14 +99,14 @@ namespace AEM_Push_CRX
             resultUpload = ExecuteCurl(commandUploadZip, Curl.RESULT_OK , out outText);
             Debug.WriteLine("OUT UPLOAD: " + outText);
 
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep(500);
 
             string commandBuildPackage = curlHeadCommand + " -f -s -S -X POST http://" + host + ":" + port + "/crx/packmgr/service/.json/etc/packages/tmp/repo/" + relativePath  + "-" + timeStamp + ".zip" + "?cmd=build";
             Debug.WriteLine( commandBuildPackage);
             resultBuild = ExecuteCurl(commandBuildPackage, Curl.RESULT_OK, out outText);
             Debug.WriteLine("OUT BUILD: " + outText);
 
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep(500);
 
             string commanDownloadPackage = curlHeadCommand + " -f -s -S -o \"" + destinationFolder + "\\pkg.zip\"" + " http://" + host +  ":" + port + "/etc/packages/tmp/repo/" + relativePath + "-" + timeStamp + ".zip";
             Debug.WriteLine( commanDownloadPackage);
@@ -131,12 +133,14 @@ namespace AEM_Push_CRX
             {
                 process.Start();
                 string output = process.StandardOutput.ReadToEnd();
+                Debug.WriteLine("OUTPUT--->: " + output);
+
                 outText = output;
                 string error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
                 Debug.WriteLine("Curl Command : " + curlCommand);
-                Debug.WriteLine("Output: " + output);
+                
                 if (output.Contains(expectedResult))
                 {
                     result = true;

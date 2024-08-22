@@ -291,7 +291,7 @@
             hostTextBox.Name = "hostTextBox";
             hostTextBox.Size = new Size(339, 23);
             hostTextBox.TabIndex = 4;
-            hostTextBox.Text = "localhost";
+            hostTextBox.Text = "192.168.1.196";
             // 
             // label2
             // 

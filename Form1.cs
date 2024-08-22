@@ -72,7 +72,7 @@ namespace AEM_Push_CRX
         // Métodos de manejo de eventos para FileSystemWatcher
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-            System.Threading.Thread.Sleep(500); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
+            /*System.Threading.Thread.Sleep(500); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
                 if (utils.IsAllowedFile(e.FullPath) && !utils.IsTargetDirectoryPresent(e.FullPath))
@@ -82,7 +82,22 @@ namespace AEM_Push_CRX
                         launchWorker(e);
                     }
                 }
+            }*/
+
+
+            System.Threading.Thread.Sleep(500); // Pequeño retraso para asegurar que el archivo se haya escrito completamente
+            if (e.ChangeType == WatcherChangeTypes.Changed)
+            {
+                if (utils.IsAllowedFile(e.FullPath) && !utils.IsTargetDirectoryPresent(e.FullPath))
+                {
+                    if (FileHasChanged(e.FullPath))
+                    {
+                        UploadFile(e.FullPath);
+                        UpdateTextBox(e.FullPath + " " + e.ChangeType);
+                    }
+                }
             }
+
         }
 
         private void launchWorker(FileSystemEventArgs e)
@@ -240,12 +255,13 @@ namespace AEM_Push_CRX
 
         private void searchFolderButton_Click(object sender, EventArgs e)
         {
-
-
-
             if (appBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                if (curl.CheckConnection(hostTextBox.Text, portTextBox.Text))
+
+                appFoldertextBox.Text = appBrowserDialog.SelectedPath;
+                initFileWatcher(appBrowserDialog.SelectedPath);
+
+                /*if (curl.CheckConnection(hostTextBox.Text, portTextBox.Text))
                 {
                     appFoldertextBox.Text = appBrowserDialog.SelectedPath;
                     initFileWatcher(appBrowserDialog.SelectedPath);
@@ -253,7 +269,7 @@ namespace AEM_Push_CRX
                 else
                 {
                     MessageBox.Show("INSTANCE NOT FOUNDED");
-                }
+                }*/
             }
         }
 
